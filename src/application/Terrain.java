@@ -62,14 +62,26 @@ public class Terrain {
 		}
 	}
 	
+	/**
+	 * 
+	 * @return The max X grid size
+	 */
 	public int getGridX() {
 		return this.gridX;
 	}
 	
+	/**
+	 * 
+	 * @return The max Y grid size
+	 */
 	public int getGridY() {
 		return this.gridY;
 	}
 	
+	/**
+	 * 
+	 * @return The radius of each node.
+	 */
 	public float getGridRadius() {
 		return this.gridRadius;
 	}

@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 /**
  * 
@@ -19,7 +20,7 @@ public class Control implements Initializable{
 
 	@FXML private Canvas img ;
     private GraphicsContext gc ;
-
+    
     private Terrain terrain; //The Map Terrain
     
 	@Override
@@ -28,6 +29,7 @@ public class Control implements Initializable{
 		gc = img.getGraphicsContext2D();
 		terrain = new Terrain(100, 100, 50);
 		terrain.generateRandomTerrain();
+		//Load the Images		
 		this.drawTerrain();
 	}
 	/**
@@ -38,22 +40,22 @@ public class Control implements Initializable{
 			for(int j =0; j < this.terrain.getGridY(); j++) {
 				switch(this.terrain.getNode(i, j).getTerrainheight()) {
 				case 0:
-					gc.setFill(Color.BLUE);
+					gc.setFill(Color.CORNFLOWERBLUE);
 					break;
 				case 1:
-					gc.setFill(Color.YELLOW);
+					gc.setFill(Color.LIGHTGOLDENRODYELLOW);
 					break;
 				case 2: 
-					gc.setFill(Color.GREEN);
+					gc.setFill(Color.LIGHTGREEN);
 					break;
 				case 3:
-					gc.setFill(Color.RED);
+					gc.setFill(Color.GREENYELLOW);
 					break;
 				case 4:
-					gc.setFill(Color.BLACK);
+					gc.setFill(Color.GREEN);
 					break;
 				case 5:
-					gc.setFill(Color.PINK);
+					gc.setFill(Color.DARKGREEN);
 					break;
 					default:
 						gc.setFill(Color.WHITE);

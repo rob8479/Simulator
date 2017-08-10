@@ -14,8 +14,8 @@ public class Node {
 		this.terrainType = newTerrainType; 
 	}
 	/**
-	 * 0 is low, 3 is high
-	 * @return 	Return the terrain height of this node (an Int from 0 up 3)
+	 * 0 is low, 5 is high
+	 * @return 	Return the terrain height of this node (an Int from 0 up 5)
 	 */
 	public int getTerrainheight() {
 		return this.terrainheight;
