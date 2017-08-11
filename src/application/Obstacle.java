@@ -80,7 +80,7 @@ public class Obstacle {
 	 * 
 	 * @param x
 	 * @param y
-	 * Set the position of the obstacle to the co-ordinates passed in.
+	 * Set the position of the obstacle to the co-ordinates passed in. 
 	 */
     public void setPosition(double x, double y)
     {

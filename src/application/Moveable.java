@@ -5,12 +5,12 @@ import javafx.scene.image.Image;
 /**
  * 
  * @author Robert Sadler
- * A moveable obstacle can increase or decrease it's velocity
+ * A moveable is an obstacle that can increase or decrease it's velocity
  *
  */
-public class MoveableObstacle extends Obstacle {
+public class Moveable extends Obstacle {
 
-	public MoveableObstacle(Image image, double positionX, double positionY, double width, double height) {
+	public Moveable(Image image, double positionX, double positionY, double width, double height) {
 		super(image, positionX, positionY, width, height);
 	}
 	

@@ -29,7 +29,7 @@
           </Menu>
         </menus>
       </MenuBar>
-      <ScrollPane layoutY="32.0" prefHeight="688.0" prefWidth="1005.0">
+      <ScrollPane layoutY="32.0" pannable="true" prefHeight="688.0" prefWidth="1005.0">
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="1080.0" prefWidth="1920.0">
                <children>

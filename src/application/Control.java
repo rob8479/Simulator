@@ -3,6 +3,7 @@ package application;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -23,15 +24,70 @@ public class Control implements Initializable{
     
     private Terrain terrain; //The Map Terrain
     
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
+	/**
+	 * Launch of the program.
+	 * Currently set at generate a random Terrain.
+	 * 
+	 * In the future, we will change this that we load and save terrains.
+	 * 
+	 * One feature I thought we could do is a random terrain generation based
+	 * on perlin noise. So we get "realistic" random terrains
+	 */
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
 		// TODO Auto-generated method stub
 		gc = img.getGraphicsContext2D();
 		terrain = new Terrain(100, 100, 50);
 		terrain.generateRandomTerrain();
 		//Load the Images		
-		this.drawTerrain();
+		this.mainSimulationLoop();
+    }
+	
+	/**
+     * The main simulation loop. 
+     * Responsible for drawing, checking physics, and then asking AI agents for their decision
+     */
+	public void mainSimulationLoop() {
+		/*
+		 * This is from the google doc.
+		 * 
+		 * 
+		while(experimentNotOver() && !IterationLimit() && !PausedEnded()) {
+			propogatePhysics();
+			displayGUI(); // update the GUI
+
+			Foreach (av in avatar) {  // everyone thinks at the same time
+				av.sendNN(terrain.getSignals());
+				av.think();
+			}
+
+			Foreach (av in avatar) { // everyone moves at the same time
+				while(command == NULL && attempt<limit) command = av.getCommand();
+					If (command != NULL) {
+						terrain.execute(command, av);
+						recordStateChange(outputFileName);
+					}
+			}
+		}
+		 */
+		
+		
+		//Creates the new thread
+		//Note to self, Don't use "this." as this is not the class is anymore, but the seperate thread
+		//i.e. You can do drawTerrain(); but not this.drawTerrain();
+		new AnimationTimer() {
+			int i = 0;
+			@Override
+			public void handle(long now) {
+				// TODO Auto-generated method stub
+				drawTerrain();
+				gc.setFill(Color.HOTPINK);
+				gc.fillRect(i, 40 , 100,100);
+				i++;
+			}			
+		}.start();
 	}
+	
 	/**
 	 * Draw the Terrain on the canvas
 	 */
