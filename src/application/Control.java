@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import javafx.animation.AnimationTimer;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
@@ -15,7 +14,7 @@ import javafx.scene.paint.Color;
 /**
  * 
  * @author Robert Sadler
- *
+ * Controlling Class for the whole Simulation. Responsible for drawing graphics, checking collisions and then calling the Physics engine.
  */
 
 public class Control implements Initializable{
@@ -24,7 +23,7 @@ public class Control implements Initializable{
     private GraphicsContext gc ;
     
     private Terrain terrain; //The Map Terrain
-    private ArrayList<Obstacle> Obstacles; //All obstacles , moveable and nonemoveable
+    private ArrayList<Obstacle> obstacles; //All obstacles , moveable and nonemoveable
     
 	/**
 	 * Launch of the program.
@@ -39,7 +38,8 @@ public class Control implements Initializable{
     public void initialize(URL location, ResourceBundle resources) {
 		// TODO Auto-generated method stub
 		gc = zoomedMap.getGraphicsContext2D();
-		terrain = new Terrain(100, 100, 50);
+		obstacles = new ArrayList<Obstacle>();
+		terrain = new Terrain(50, 50, 100); //50 by 50 m terrain. 100 pixels, 1 pixel = 1 cm.
 		terrain.generateRandomTerrain();
 		//Load the Images		
 		this.mainSimulationLoop();
@@ -73,14 +73,32 @@ public class Control implements Initializable{
 			}
 		 */
 		
+		Image Robot = new Image(getClass().getResource("Robot.png").toExternalForm());
 		//Creates the new thread
 		//Note to self, Don't use "this." as this is not the class is anymore, but the seperate thread
 		//i.e. You can do drawTerrain(); but not this.drawTerrain();
+		Moveable test = new Moveable(Robot, 100, 1000, 45);
+		test.setVelocity(1);
+		obstacles.add(test);
 		new AnimationTimer() {
+			long lastNanoTime = System.nanoTime();
+			double elapsed = 0;
 			@Override
-			public void handle(long now) {
-				// TODO Auto-generated method stub
-				drawTerrain();
+			public void handle(long currentNanoTime) {
+				// Timing. The difference between the last frame and the current frame, in seconds
+				double elapsedTime = (currentNanoTime - lastNanoTime) / 1000000000.0;
+				lastNanoTime = currentNanoTime;
+				elapsed += elapsedTime;
+
+				if(elapsed > 3) {
+					elapsed = 0;
+					test.changeRotation(test.getRotation() + 20);
+				}
+				
+				drawTerrain(); //Draw the Terrain
+				checkCollisions(); //Check the collisions
+				updatePositions(elapsedTime);
+				drawObstacles(); 	//Then Draw the position of all obstacles
 			}			
 		}.start();
 	}
@@ -117,8 +135,8 @@ public class Control implements Initializable{
 						gc.setFill(Color.WHITE);
 						break;
 				}
-				float radius = terrain.getNodeDiameter();
-				gc.fillRect(i * radius, j * radius , radius,radius );
+				float diameter = terrain.getNodeDiameter();
+				gc.fillRect(i * diameter, j * diameter , diameter,diameter );
 			}
 		}	
 	}
@@ -128,8 +146,37 @@ public class Control implements Initializable{
 	 */
 	public void drawObstacles() {
 		//For Each Obstacle in the list, render it
-		for(Obstacle o : Obstacles) {
+		for(Obstacle o : obstacles) {
 			o.render(gc);
+		}
+	}
+	
+	/**
+	 * Check if any collision has occured
+	 */
+	public void checkCollisions() {
+		//For each Obstacle o in the list, check every other object that it is not o, l to see if it intersects
+		for(Obstacle o: obstacles) {
+			for(Obstacle l: obstacles) {
+				if(!o.equals(l)) {
+					if(o.intersects(l)) {
+						System.out.println("COLLISION");
+						//Collision Handle
+						//Need a check to make sure we don't have this transative relation
+						//I.e. A Collides B , Does not then check B Collides A
+					}
+				}
+			}
+		}
+		
+	}
+	
+	/**
+	 * Calculate the position of the Obstacles
+	 */
+	public void updatePositions(double time) {
+		for(Obstacle o : obstacles) {
+			o.update(time);;
 		}
 	}
 

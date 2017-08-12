@@ -10,19 +10,33 @@ import javafx.scene.image.Image;
  */
 public class Moveable extends Obstacle {
 
-	public Moveable(Image image, double positionX, double positionY, double width, double height) {
-		super(image, positionX, positionY, width, height);
+	public Moveable(Image image, double positionX, double positionY,double angle) {
+		super(image, positionX, positionY,angle);
 	}
 	
 	/**
 	 * 
-	 * @param x
-	 * @param y
+	 * @param rotation - New Desired Rotation
+	 * Rotate the obstacle to the desired rotation.
 	 */
-    public void addVelocity(double x, double y)
-    {
-        velocityX += x;
-        velocityY += y;
+    public void changeRotation(double rotation) {
+    	angle = rotation;
     }
-
+    
+    /**
+     * 
+     * @param newVelocity - New Desired Velocity in m/s
+     * Set's the Velocity of the object equal to the given param.
+     */
+    public void setVelocity(double newVelocity) {
+    	velocity = newVelocity * 100;
+    }
+    
+    /**
+     * 
+     * @return The current velocity of the object. 
+     */
+    public double getVelocity() {
+    	return this.velocity;
+    }
 }
