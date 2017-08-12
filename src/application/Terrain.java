@@ -12,13 +12,13 @@ public class Terrain {
 	private Node[][] terrain;
 	private int gridX;
 	private int gridY;
-	private float gridRadius;
+	private float nodeDiameter;
 	
 	//Constructor
-	public Terrain(int newGridX, int newGridY, float newGridRadius) {
+	public Terrain(int newGridX, int newGridY, float newnodeDiameter) {
 		this.gridX = newGridX;
 		this.gridY = newGridY;
-		this.gridRadius = newGridRadius;
+		this.nodeDiameter = newnodeDiameter;
 		terrain = new Node[gridX][gridY];
 	}
 	
@@ -80,9 +80,25 @@ public class Terrain {
 	
 	/**
 	 * 
-	 * @return The radius of each node.
+	 * @return The diameter of each node.
 	 */
-	public float getGridRadius() {
-		return this.gridRadius;
+	public float getNodeDiameter() {
+		return this.nodeDiameter;
+	}
+	
+	/**
+	 * 
+	 * @param x - X Coordinate
+	 * @param y - Y Coordinate
+	 * @return Returns the node for which that Coordinate is inside
+	 */
+	public Node nodeFromCoordinate(float x, float y) {
+		x = x / this.nodeDiameter;
+		y = y / this.nodeDiameter;
+		
+		int tempx = (int)x;
+		int tempy = (int)y;
+		
+		return this.terrain[tempx][tempy];
 	}
 }
