@@ -12,8 +12,7 @@ import javafx.scene.Scene;
  *
  */
 
-public class Main extends Application {
-	@Override
+public class  Main extends Application {
 	public void start(Stage primaryStage) {
 		try {
 			Parent root = FXMLLoader.load(getClass().getResource("GUI.fxml"));	

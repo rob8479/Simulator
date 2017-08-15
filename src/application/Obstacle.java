@@ -15,13 +15,13 @@ import javafx.scene.transform.Rotate;
 public class Obstacle {
 	
 	private Image image;
-	private double positionX;
-	private double positionY;
+	protected double positionX;
+	protected double positionY;
 	private double width; //x
 	private double height; //y
 	protected double angle;//Direction we are facing
-	protected double velocity;
-	//private double rotation;
+	protected double velocityX;
+	protected double velocityY;
 	
 	/**
 	 * 
@@ -38,7 +38,8 @@ public class Obstacle {
 		this.width = image.getWidth();
 		this.height = image.getHeight();
 		this.angle = angle;
-		this.velocity = 0;
+		this.velocityX = 0;
+		this.velocityY = 0;
 	}
 	
 	/**
@@ -48,9 +49,12 @@ public class Obstacle {
 	 * Note: Only movable objects can be given velocity, so velocity is controlled within that class and not here.
 	 */
 	public void update(double elapsedTime) {
-		//Position is equal to the Old Position, plus the direction and Velocity		
-		positionX += (Math.cos(Math.toRadians(angle - 90)) * velocity) * elapsedTime;	
-		positionY += (Math.sin(Math.toRadians(angle - 90)) * velocity) * elapsedTime;
+		//Position is equal to the Old Position, plus the velocity in that direction
+		positionX += (velocityX * elapsedTime);
+		positionY += (velocityY * elapsedTime);
+		
+		//positionX += (Math.cos(Math.toRadians(angle - 90)) * velocity) * elapsedTime;	
+		//positionY += (Math.sin(Math.toRadians(angle - 90)) * velocity) * elapsedTime;
 		/**
 		 * Because the top left corner is 0,0 - as apposed to the convential bottom left, the whole thing needs shifting by -90 degrees
 		 */
@@ -146,5 +150,21 @@ public class Obstacle {
         rotate(gc, angle, tlpx + image.getWidth() / 2, tlpy + image.getHeight() / 2);
         gc.drawImage(image, tlpx, tlpy);
         gc.restore(); // back to original state (before rotation)
+    }
+    
+    /**
+     * 
+     * @return The current velocity of the object in the X axis.
+     */
+    public double getVelocityX() {
+    	return this.velocityX;
+    }
+    
+    /**
+     * 
+     * @return The current velocity of the object in the Y axis.
+     */
+    public double getVelocityY() {
+    	return this.velocityY;
     }
 }

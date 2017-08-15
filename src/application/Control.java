@@ -10,6 +10,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 /**
  * 
@@ -24,6 +25,8 @@ public class Control implements Initializable{
     
     private Terrain terrain; //The Map Terrain
     private ArrayList<Obstacle> obstacles; //All obstacles , moveable and nonemoveable
+    
+    private Driveable robot;
     
 	/**
 	 * Launch of the program.
@@ -72,29 +75,23 @@ public class Control implements Initializable{
 				}
 			}
 		 */
+				
 		
 		Image Robot = new Image(getClass().getResource("Robot.png").toExternalForm());
 		//Creates the new thread
 		//Note to self, Don't use "this." as this is not the class is anymore, but the seperate thread
 		//i.e. You can do drawTerrain(); but not this.drawTerrain();
-		Moveable test = new Moveable(Robot, 100, 1000, 45);
-		test.setVelocity(1);
-		obstacles.add(test);
+		robot = new Driveable(Robot, 0, 0, 0);
+		obstacles.add(robot);
+
 		new AnimationTimer() {
 			long lastNanoTime = System.nanoTime();
-			double elapsed = 0;
 			@Override
 			public void handle(long currentNanoTime) {
 				// Timing. The difference between the last frame and the current frame, in seconds
 				double elapsedTime = (currentNanoTime - lastNanoTime) / 1000000000.0;
 				lastNanoTime = currentNanoTime;
-				elapsed += elapsedTime;
 
-				if(elapsed > 3) {
-					elapsed = 0;
-					test.changeRotation(test.getRotation() + 20);
-				}
-				
 				drawTerrain(); //Draw the Terrain
 				checkCollisions(); //Check the collisions
 				updatePositions(elapsedTime);
@@ -152,7 +149,7 @@ public class Control implements Initializable{
 	}
 	
 	/**
-	 * Check if any collision has occured
+	 * Check if any collision has occurred
 	 */
 	public void checkCollisions() {
 		//For each Obstacle o in the list, check every other object that it is not o, l to see if it intersects
@@ -179,6 +176,40 @@ public class Control implements Initializable{
 			o.update(time);;
 		}
 	}
+	
+	/**
+	 * 
+	 * @param e - The key that has been pressed
+	 * This is purely for testing purposes to have a robot that can be driven.
+	 * 
+	 * W - Increase Velocity
+	 * A - Turn to the Left
+	 * S - Decrease Velocity
+	 * D - Turn to the right
+	 * 
+	 */
+	public void buttonPressed(KeyEvent e) {
+		//Forward
+		if(e.getCode().toString().equals("W")) {
+			robot.setVelocity(+ 1);
+		}
+		
+		//Left
+		if(e.getCode().toString().equals("A")){
+			robot.setRotation(robot.getRotation() - 3);
+		}
+		
+		//Backwards
+		if(e.getCode().toString().equals("S")) {
+			robot.setVelocity(- 1);
+		}
+		
+		//Right
+		if(e.getCode().toString().equals("D")){
+			robot.setRotation(robot.getRotation() + 3);
+		}
+	}
+	
 
 
 }
