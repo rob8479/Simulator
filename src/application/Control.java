@@ -27,6 +27,7 @@ public class Control implements Initializable{
     private ArrayList<Obstacle> obstacles; //All obstacles , moveable and nonemoveable
     
     private Driveable robot;
+    private Physics physics;
     
 	/**
 	 * Launch of the program.
@@ -43,6 +44,7 @@ public class Control implements Initializable{
 		gc = zoomedMap.getGraphicsContext2D();
 		obstacles = new ArrayList<Obstacle>();
 		terrain = new Terrain(50, 50, 100); //50 by 50 m terrain. 100 pixels, 1 pixel = 1 cm.
+		physics = new Physics(); //Initialise the physic's engine
 		terrain.generateRandomTerrain();
 		//Load the Images		
 		this.mainSimulationLoop();
@@ -78,12 +80,24 @@ public class Control implements Initializable{
 				
 		
 		Image Robot = new Image(getClass().getResource("Robot.png").toExternalForm());
+		Image Box = new Image(getClass().getResource("Box.png").toExternalForm());
 		//Creates the new thread
 		//Note to self, Don't use "this." as this is not the class is anymore, but the seperate thread
 		//i.e. You can do drawTerrain(); but not this.drawTerrain();
 		robot = new Driveable(Robot, 0, 0, 0);
 		obstacles.add(robot);
-
+		Moveable boxxy = new Moveable(Box,500,500,0);
+		obstacles.add(boxxy);
+		
+		Moveable boxxy2 = new Moveable(Box,300,300,0);
+		obstacles.add(boxxy2);
+		
+		Moveable boxxy3 = new Moveable(Box,100,100,0);
+		obstacles.add(boxxy3);
+		
+		Moveable boxxy4 = new Moveable(Box,200,200,0);
+		obstacles.add(boxxy4);
+		
 		new AnimationTimer() {
 			long lastNanoTime = System.nanoTime();
 			@Override
@@ -155,12 +169,13 @@ public class Control implements Initializable{
 		//For each Obstacle o in the list, check every other object that it is not o, l to see if it intersects
 		for(Obstacle o: obstacles) {
 			for(Obstacle l: obstacles) {
-				if(!o.equals(l)) {
+				if(!o.equals(l) ) {
 					if(o.intersects(l)) {
-						System.out.println("COLLISION");
+						//System.out.println("COLLISION");
 						//Collision Handle
 						//Need a check to make sure we don't have this transative relation
 						//I.e. A Collides B , Does not then check B Collides A
+						physics.testPushBox(o, l);
 					}
 				}
 			}

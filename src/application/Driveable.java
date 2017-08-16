@@ -23,10 +23,10 @@ public class Driveable extends Obstacle {
 	 * Note: Only movable objects can be given velocity, so velocity is controlled within that class and not here.
 	 */
 	public void update(double elapsedTime) {
-		velocityX = (Math.cos(Math.toRadians(angle - 90)) * velocity);
-		velocityY = (Math.sin(Math.toRadians(angle - 90)) * velocity);
-		positionX += velocityX * elapsedTime;	
-		positionY += velocityY * elapsedTime;
+		velocityX = (Math.cos(Math.toRadians(angle - 90)) * velocity) * elapsedTime;
+		velocityY = (Math.sin(Math.toRadians(angle - 90)) * velocity) * elapsedTime;
+		positionX += velocityX;	
+		positionY += velocityY;
 		/**
 		 * Because the top left corner is 0,0 - as apposed to the convential bottom left, the whole thing needs shifting by -90 degrees
 		 */

@@ -58,6 +58,11 @@ public class Obstacle {
 		/**
 		 * Because the top left corner is 0,0 - as apposed to the convential bottom left, the whole thing needs shifting by -90 degrees
 		 */
+		
+		
+		//COME BACK TO - This assumes there is no friction in the world
+		velocityX = 0;
+		velocityY = 0;
 	}
 	
 	/**
@@ -167,4 +172,22 @@ public class Obstacle {
     public double getVelocityY() {
     	return this.velocityY;
     }
+    
+    /**
+     * 
+     * @param newVelocity - New Desired Velocity in m/s
+     * Set's the Velocity in the x axis of the object equal to the given param.
+     */
+    public void setVelocityX(double newVelocity) {
+    	velocityX = newVelocity * 100;
+    }
+    
+    /**
+     * 
+     * @param newVelocity - New Desired Velocity in m/s
+     * Set's the Velocity in the y axis of the object equal to the given param.
+     */
+	public void setVelocityY(double newVelocity) {
+    	velocityY = newVelocity * 100;
+	}
 }
