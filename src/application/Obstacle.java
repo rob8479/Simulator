@@ -87,6 +87,17 @@ public class Obstacle {
 	
 	/**
 	 * 
+	 * @param x - X-Cordinate for click
+	 * @param y - Y-Cordinate for click
+	 * @return - Returns true if the mouse position clicks on this entity, else false.
+	 */
+	public boolean selectedEntity(double x, double y) {
+		return this.getBoundary().contains(x, y);
+	}
+	
+	
+	/**
+	 * 
 	 * @param o - The Obstacle which we want to see is intersecting with this obstacle
 	 * @return True if the obstacle is within the bounds of this object, else false.
 	 */
