@@ -49,6 +49,17 @@ public class Terrain {
 	}
 	
 	/**
+	 * Sets the specified gridReference as the givenNode
+	 * @param newNode - The newNode for the Grid
+	 * @param x - x co-ord in the grid
+	 * @param y - y co-ord in the grid
+	 * 
+	 */
+	public void setNode(Node newNode, int x, int y) {
+		terrain[x][y] = newNode;
+	}
+	
+	/**
 	 * For Debugging purposes, prints out the terrain as a numerical grid in System.Out
 	 */
 	
@@ -101,4 +112,5 @@ public class Terrain {
 		
 		return this.terrain[tempx][tempy];
 	}
+		
 }

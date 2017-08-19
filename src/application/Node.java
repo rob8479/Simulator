@@ -24,9 +24,9 @@ public class Node {
 	// WILL MOST LIKLEY CHANGE TO A TYPE SYSTEM, BUT FOR NOW, IT'S STRING BASE
 	/**
 	 * 
-	 * @return Returns a String, Either "Sand", "Soil", "Carpet", "Concrete" or "Tile"
+	 * @return Returns a String, Either "Water", "Concrete", "Sand","Carpet","Grass" or "Tile"
 	 */
-	public String terrainType() {
-		return this.terrainType();
+	public String getTerrainType() {
+		return this.terrainType;
 	}
 }

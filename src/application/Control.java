@@ -9,15 +9,19 @@ import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.text.TextAlignment;
 /**
  * 
  * @author Robert Sadler
@@ -62,15 +66,9 @@ public class Control implements Initializable{
        
     //Terrain Configuration
     @FXML private Tab terrainConfig;
-    @FXML private Button robotButton;
-    @FXML private Button moveableBoxButton;
-    @FXML private Button fixedObstacleButton;
-    @FXML private Button removeObstacleButton;
-    @FXML private Button waterButton;
-    @FXML private Button concreteButton;
-    @FXML private Button sandButton;
-    @FXML private Button carpetButton;
     
+    @FXML private ToggleGroup selectedMaterial;
+            
 	/**
 	 * Launch of the program.
 	 * Currently set at generate a random Terrain.
@@ -128,7 +126,7 @@ public class Control implements Initializable{
 	        public void handle(MouseEvent me) {
 	        	if(terrainConfig.isSelected()) {
 	        		//We are drawing on the terrain, and need to alter the terrain
-	        		
+	        		drawToTerrain(me);
 	        	} else {
 	        		//We are in config mode. So we are looking to see if the mouse has clicked on an entity
 		            for(Obstacle o: obstacles) {
@@ -167,6 +165,7 @@ public class Control implements Initializable{
 			long lastNanoTime = System.nanoTime();
 				@Override
 				public void handle(long currentNanoTime) {
+					//System.out.println(selectedMaterial.getSelectedToggle());
 					// Timing. The difference between the last frame and the current frame, in seconds
 					if(isRunning) {
 					double elapsedTime = (currentNanoTime - lastNanoTime) / 1000000000.0;
@@ -186,6 +185,7 @@ public class Control implements Initializable{
 						double totalVelocity = Math.sqrt((selectedEntity.getVelocityX() * selectedEntity.getVelocityX()) + (selectedEntity.getVelocityY() * selectedEntity.getVelocityY()));
 						velocity.setText(df.format(totalVelocity) + " m/s");					
 					}
+					
 					
 					//Simulation Stats Print
 					double currentFps = 1/elapsedTime;
@@ -209,26 +209,27 @@ public class Control implements Initializable{
 	 * Water|  Sand  | Various degrees of Grass
 	 */
 	public void drawTerrain() {
+		gc.setTextAlign(TextAlignment.CENTER);
 		for(int i = 0; i < this.terrain.getGridX(); i++) {
 			for(int j =0; j < this.terrain.getGridY(); j++) {
-				switch(this.terrain.getNode(i, j).getTerrainheight()) {
-				case 0:
+				switch(this.terrain.getNode(i, j).getTerrainType()) {
+				case "Water":
 					gc.setFill(Color.CORNFLOWERBLUE);
 					break;
-				case 1:
+				case "Concrete":
+					gc.setFill(Color.DARKGREY);
+					break;
+				case "Sand": 
 					gc.setFill(Color.LIGHTGOLDENRODYELLOW);
 					break;
-				case 2: 
-					gc.setFill(Color.LIGHTGREEN);
+				case "Carpet":
+					gc.setFill(Color.MEDIUMPURPLE);
 					break;
-				case 3:
+				case "Grass":
 					gc.setFill(Color.GREENYELLOW);
 					break;
-				case 4:
-					gc.setFill(Color.GREEN);
-					break;
-				case 5:
-					gc.setFill(Color.DARKGREEN);
+				case "Tile":
+					gc.setFill(Color.CADETBLUE);
 					break;
 					default:
 						gc.setFill(Color.WHITE);
@@ -236,6 +237,8 @@ public class Control implements Initializable{
 				}
 				float diameter = terrain.getNodeDiameter();
 				gc.fillRect(i * diameter, j * diameter , diameter,diameter );
+				gc.setFill(Color.LIGHTGRAY);
+				gc.fillText(terrain.getNode(i, j).getTerrainheight() + "", i * diameter + (diameter/2) , j * diameter + (diameter/2));
 			}
 		}	
 	}
@@ -342,8 +345,62 @@ public class Control implements Initializable{
 		pause.setDisable(false);
 		end.setDisable(true);
 		this.isRunning = false;
+		
 	}
 	
+	/**
+	 * @param me - current data about the mouse
+	 * Once inside the terrain config, this method is called when a mouse click is detected on the terrain.
+	 * It takes the selected Material, and the current mouse position, and add's that Material to the terrain.
+	 * It then redraws the terrain with that new material/entity added. 
+	 */
+	public void drawToTerrain(MouseEvent me) {
+		//Get the Selected Material
+		if(selectedMaterial.getSelectedToggle() != null) {
+			String uneditedString = selectedMaterial.getSelectedToggle().toString();
+			//The original string has a lot of formatting. Remove to get just the name of the button selected
+			String[] parts = uneditedString.split("'");
+						
+			//Position of the Mouse:
+			double mouseX = me.getX();
+			double mouseY = me.getY();
+			int terrainX = (int)( mouseX / terrain.getNodeDiameter());
+			int terrainY = (int)( mouseY / terrain.getNodeDiameter());
+			
+			Node newNode; //The newNode to be drawn
+			
+			//Check what the selected material is
+			switch(parts[1]) {
+			case "Water":	
+				newNode = new Node(4,"Water");
+				break;
+			case "Concrete":	
+				newNode = new Node(4,"Concrete");
+				break;
+			case "Sand":
+				newNode = new Node(4,"Sand");
+				break;
+			case "Carpet":
+				newNode = new Node(4,"Carpet");
+				break;
+			case "Grass":
+				newNode = new Node(4,"Grass");
+				break;
+			case "Tile":
+				newNode = new Node(4,"Tile");
+				break;
+			default:
+				newNode = new Node(4,"Sand");
+			}
+			
+			//Update the terrain
+			terrain.setNode(newNode, terrainX, terrainY);
 
-
+			//Redraw the world with the changes
+			this.drawTerrain();
+			this.drawObstacles();
+	
+		}	
+	}
+	
 }

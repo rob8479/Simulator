@@ -10,6 +10,8 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.shape.Rectangle?>
@@ -97,16 +99,21 @@
                         <Button layoutX="211.0" layoutY="72.0" mnemonicParsing="false" text="Save" />
                         <ScrollPane layoutX="13.0" layoutY="134.0" prefHeight="341.0" prefWidth="251.0">
                           <content>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="449.0" prefWidth="231.0">
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="512.0" prefWidth="231.0">
                                  <children>
-                                    <Button fx:id="robotButton" layoutX="21.0" layoutY="14.0" mnemonicParsing="false" prefHeight="89.0" prefWidth="84.0" text="Robot" textAlignment="CENTER" wrapText="true" />
-                                    <Button fx:id="moveableBoxButton" layoutX="133.0" layoutY="14.0" mnemonicParsing="false" prefHeight="89.0" prefWidth="84.0" text="Moveable Box" textAlignment="CENTER" wrapText="true" />
-                                    <Button fx:id="fixedObstacleButton" layoutX="21.0" layoutY="115.0" mnemonicParsing="false" prefHeight="89.0" prefWidth="84.0" text="Fixed Obstacle" textAlignment="CENTER" wrapText="true" />
-                                    <Button fx:id="removeObstacleButton" layoutX="133.0" layoutY="115.0" mnemonicParsing="false" prefHeight="89.0" prefWidth="84.0" text="Remove Obstacle" textAlignment="CENTER" wrapText="true" />
-                                    <Button fx:id="waterButton" layoutX="21.0" layoutY="213.0" mnemonicParsing="false" prefHeight="89.0" prefWidth="84.0" text="Water" textAlignment="CENTER" wrapText="true" />
-                                    <Button fx:id="concreteButton" layoutX="133.0" layoutY="213.0" mnemonicParsing="false" prefHeight="89.0" prefWidth="84.0" text="Concrete" textAlignment="CENTER" wrapText="true" />
-                                    <Button fx:id="sandButton" layoutX="21.0" layoutY="316.0" mnemonicParsing="false" prefHeight="89.0" prefWidth="84.0" text="Sand" textAlignment="CENTER" wrapText="true" />
-                                    <Button fx:id="carpetButton" layoutX="133.0" layoutY="316.0" mnemonicParsing="false" prefHeight="89.0" prefWidth="84.0" text="Carpet" textAlignment="CENTER" wrapText="true" />
+                                    <ToggleButton layoutX="24.0" layoutY="14.0" mnemonicParsing="false" prefHeight="84.0" prefWidth="84.0" selected="true" text="Robot" textAlignment="CENTER" wrapText="true">
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="selectedMaterial" />
+                                       </toggleGroup></ToggleButton>
+                                    <ToggleButton layoutX="124.0" layoutY="14.0" mnemonicParsing="false" prefHeight="84.0" prefWidth="84.0" text="MoveAble Obstacle" textAlignment="CENTER" toggleGroup="$selectedMaterial" wrapText="true" />
+                                    <ToggleButton layoutX="24.0" layoutY="112.0" mnemonicParsing="false" prefHeight="84.0" prefWidth="84.0" text="Fixed Obstacle" textAlignment="CENTER" toggleGroup="$selectedMaterial" wrapText="true" />
+                                    <ToggleButton layoutX="124.0" layoutY="112.0" mnemonicParsing="false" prefHeight="84.0" prefWidth="84.0" text="Remove Obstacle" textAlignment="CENTER" toggleGroup="$selectedMaterial" wrapText="true" />
+                                    <ToggleButton layoutX="26.0" layoutY="208.0" mnemonicParsing="false" prefHeight="84.0" prefWidth="84.0" text="Water" textAlignment="CENTER" toggleGroup="$selectedMaterial" wrapText="true" />
+                                    <ToggleButton layoutX="126.0" layoutY="208.0" mnemonicParsing="false" prefHeight="84.0" prefWidth="84.0" text="Concrete" textAlignment="CENTER" toggleGroup="$selectedMaterial" wrapText="true" />
+                                    <ToggleButton layoutX="26.0" layoutY="306.0" mnemonicParsing="false" prefHeight="84.0" prefWidth="84.0" text="Sand" textAlignment="CENTER" toggleGroup="$selectedMaterial" wrapText="true" />
+                                    <ToggleButton layoutX="126.0" layoutY="306.0" mnemonicParsing="false" prefHeight="84.0" prefWidth="84.0" text="Carpet" textAlignment="CENTER" toggleGroup="$selectedMaterial" wrapText="true" />
+                                    <ToggleButton layoutX="27.0" layoutY="402.0" mnemonicParsing="false" prefHeight="84.0" prefWidth="84.0" text="Grass" textAlignment="CENTER" toggleGroup="$selectedMaterial" wrapText="true" />
+                                    <ToggleButton layoutX="127.0" layoutY="402.0" mnemonicParsing="false" prefHeight="84.0" prefWidth="84.0" text="Tile" textAlignment="CENTER" toggleGroup="$selectedMaterial" wrapText="true" />
                                  </children>
                               </AnchorPane>
                           </content>
