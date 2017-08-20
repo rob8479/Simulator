@@ -72,6 +72,12 @@ public class Obstacle {
 	 */
 	public void render(GraphicsContext gc) {
 		//gc.drawImage(image, positionX, positionY);
+		
+		//Draw HitBox - For Debugging only
+		Rectangle2D bounds = this.getBoundary();
+		gc.fillRect(bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight());
+		
+		
 		this.drawRotatedImage(gc, image, angle, positionX, positionY);
 	}
 	

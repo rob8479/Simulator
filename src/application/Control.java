@@ -9,18 +9,18 @@ import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 /**
  * 
@@ -66,8 +66,8 @@ public class Control implements Initializable{
        
     //Terrain Configuration
     @FXML private Tab terrainConfig;
-    
     @FXML private ToggleGroup selectedMaterial;
+    @FXML private Slider slider;
             
 	/**
 	 * Launch of the program.
@@ -83,7 +83,7 @@ public class Control implements Initializable{
 		// TODO Auto-generated method stub
 		gc = zoomedMap.getGraphicsContext2D();
 		obstacles = new ArrayList<Obstacle>();
-		terrain = new Terrain(50, 50, 100); //50 by 50 m terrain. 100 pixels, 1 pixel = 1 cm.
+		terrain = new Terrain(20, 20, 100); //20 by 20 m terrain. 100 pixels, 1 pixel = 1 cm.
 		physics = new Physics(); //Initialise the physic's engine
 		terrain.generateRandomTerrain();
 		isRunning = false;
@@ -162,12 +162,10 @@ public class Control implements Initializable{
 		DecimalFormat df = new DecimalFormat("#.##");
 		
 		new AnimationTimer() {
-			long lastNanoTime = System.nanoTime();
-				@Override
+				long lastNanoTime = System.nanoTime();
 				public void handle(long currentNanoTime) {
-					//System.out.println(selectedMaterial.getSelectedToggle());
-					// Timing. The difference between the last frame and the current frame, in seconds
 					if(isRunning) {
+					// Timing. The difference between the last frame and the current frame, in seconds
 					double elapsedTime = (currentNanoTime - lastNanoTime) / 1000000000.0;
 					lastNanoTime = currentNanoTime;
 					
@@ -183,7 +181,10 @@ public class Control implements Initializable{
 						//Pyth. for Velocity X + Velocity Y for the total velocity
 						/** THIS MAY BE WRONG **/
 						double totalVelocity = Math.sqrt((selectedEntity.getVelocityX() * selectedEntity.getVelocityX()) + (selectedEntity.getVelocityY() * selectedEntity.getVelocityY()));
-						velocity.setText(df.format(totalVelocity) + " m/s");					
+						velocity.setText(df.format(totalVelocity) + " m/s");	
+						Node onNode = terrain.nodeFromCoordinate((float)selectedEntity.getXPosition(), (float)selectedEntity.getYPosition());
+						elevation.setText(onNode.getTerrainheight() + "");
+						surface.setText(onNode.getTerrainType() + "");
 					}
 					
 					
@@ -197,16 +198,17 @@ public class Control implements Initializable{
 					checkCollisions(); //Check the collisions
 					updatePositions(elapsedTime);
 					drawObstacles(); 	//Then Draw the position of all obstacles
-				}	
+				}else {
+					lastNanoTime = currentNanoTime;
+				}
 			}
 		}.start();
 	}
 	
 	/**
 	 * Draw the Terrain on the canvas
-	 * Reads in each node of the terrain, and reads the value for it's elevation.
-	 * Blue | Yellow | And then Green's getting darker
-	 * Water|  Sand  | Various degrees of Grass
+	 * Reads in each node of the terrain
+	 * Get's the terrain type and the elevation, pushing the colour for that tile as the material, and a number for the elevation
 	 */
 	public void drawTerrain() {
 		gc.setTextAlign(TextAlignment.CENTER);
@@ -226,7 +228,7 @@ public class Control implements Initializable{
 					gc.setFill(Color.MEDIUMPURPLE);
 					break;
 				case "Grass":
-					gc.setFill(Color.GREENYELLOW);
+					gc.setFill(Color.LIMEGREEN);
 					break;
 				case "Tile":
 					gc.setFill(Color.CADETBLUE);
@@ -369,28 +371,32 @@ public class Control implements Initializable{
 			
 			Node newNode; //The newNode to be drawn
 			
+			//Elevation Height
+			int height = (int) slider.getValue();
+			
+			
 			//Check what the selected material is
 			switch(parts[1]) {
 			case "Water":	
-				newNode = new Node(4,"Water");
+				newNode = new Node(height,"Water");
 				break;
 			case "Concrete":	
-				newNode = new Node(4,"Concrete");
+				newNode = new Node(height,"Concrete");
 				break;
 			case "Sand":
-				newNode = new Node(4,"Sand");
+				newNode = new Node(height,"Sand");
 				break;
 			case "Carpet":
-				newNode = new Node(4,"Carpet");
+				newNode = new Node(height,"Carpet");
 				break;
 			case "Grass":
-				newNode = new Node(4,"Grass");
+				newNode = new Node(height,"Grass");
 				break;
 			case "Tile":
-				newNode = new Node(4,"Tile");
+				newNode = new Node(height,"Tile");
 				break;
 			default:
-				newNode = new Node(4,"Sand");
+				newNode = new Node(height,"Sand");
 			}
 			
 			//Update the terrain
