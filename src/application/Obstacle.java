@@ -1,8 +1,13 @@
 package application;
 
+import java.awt.Polygon;
+import java.awt.geom.Area;
+import java.awt.geom.Path2D;
+
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import javafx.scene.transform.Rotate;
 
 /**
@@ -23,6 +28,22 @@ public class Obstacle {
 	protected double velocityX;
 	protected double velocityY;
 	
+	//The 4 corners of the object
+	private double distanceToCorner;
+	private double angleToCorner;
+	
+	
+	
+	double topLeftX;
+	double topLeftY;
+	double toprightX ;
+	double toprightY;
+	double bottomLeftX;
+	double bottomLeftY ;
+	double bottomRightX ;
+	double bottomRightY ;
+	
+		
 	/**
 	 * 
 	 * @param image			- Image for the obstacle
@@ -40,6 +61,13 @@ public class Obstacle {
 		this.angle = angle;
 		this.velocityX = 0;
 		this.velocityY = 0;
+		
+		//Centre of the Object
+		double centreX = this.positionX + (image.getWidth() / 2);
+		double centreY = this.positionY + (image.getHeight() /2);
+		//Calculate the distances
+		distanceToCorner = this.getDistance(positionX, positionY, centreX, centreY);
+		angleToCorner = Math.atan((image.getHeight() / 2) / (image.getWidth() / 2));
 	}
 	
 	/**
@@ -71,21 +99,20 @@ public class Obstacle {
 	 * Called by the main simulation loop to draw the obstacle at it's current position
 	 */
 	public void render(GraphicsContext gc) {
-		//gc.drawImage(image, positionX, positionY);
-		
-		//Draw HitBox - For Debugging only
-		Rectangle2D bounds = this.getBoundary();
-		gc.fillRect(bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight());
-		
-		
 		this.drawRotatedImage(gc, image, angle, positionX, positionY);
+		//Draw HitBoxes - Fro Debugging only
+		gc.setFill(Color.RED);
+		gc.strokeLine(topLeftX, topLeftY, toprightX, toprightY);
+		gc.strokeLine(toprightX, toprightY, bottomRightX, bottomRightY);
+		gc.strokeLine(bottomRightX, bottomRightY, bottomLeftX, bottomLeftY);
+		gc.strokeLine(bottomLeftX, bottomLeftY, topLeftX, topLeftY);
+
 	}
 	
 	/**
 	 * 
 	 * @return Returns a rectangle showing the bounds of this obstacle.
 	 * 
-	 * THIS NEEDS CHANGING
 	 */
 	public Rectangle2D getBoundary() {
 		return new Rectangle2D(positionX, positionY, width, height);
@@ -108,8 +135,52 @@ public class Obstacle {
 	 * @return True if the obstacle is within the bounds of this object, else false.
 	 */
 	public boolean intersects(Obstacle o) {
-		return o.getBoundary().intersects(this.getBoundary());
+		//return o.getBoundary().intersects(this.getBoundary());
+		Path2D hitBox = this.getHitBox();
+		Area area = new Area(hitBox);
+		area.intersect(new Area (o.getHitBox()));
+		return !area.isEmpty();
 	}
+	
+	/**
+	 * 
+	 * @return The hitbox is slightly different to the boundary. The Hitbox is a more accurate representation, as it will rotate with 
+	 * the object. The Bounding box does not. This needs to be accurate to achieve accurate physics.
+	 */
+	public Path2D getHitBox() {
+		double topLeftAngle =  360 - Math.toDegrees(this.angleToCorner) + this.angle;
+		double topRightAngle = 270 - Math.toDegrees(this.angleToCorner) + this.angle;
+		double bottomleftAngle = 180 - Math.toDegrees(this.angleToCorner) + this.angle;
+		double bottomRightAngle = 90 - Math.toDegrees(this.angleToCorner) + this.angle;
+		
+		
+		//Current Centre
+		double centreX = this.positionX + (this.image.getWidth() / 2);
+		double centreY = this.positionY + (this.image.getHeight() / 2);
+		
+		
+		//Calculate the Points
+		toprightX = centreX + (this.distanceToCorner * Math.cos(Math.toRadians(topLeftAngle)));
+		toprightY = centreY + (this.distanceToCorner * Math.sin(Math.toRadians(topLeftAngle)));		 
+		topLeftX = centreX + (this.distanceToCorner * Math.cos(Math.toRadians(topRightAngle)));
+		topLeftY = centreY + (this.distanceToCorner * Math.sin(Math.toRadians(topRightAngle)));
+		bottomLeftX = centreX + (this.distanceToCorner * Math.cos(Math.toRadians(bottomleftAngle)));
+		bottomLeftY = centreY + (this.distanceToCorner * Math.sin(Math.toRadians(bottomleftAngle)));
+		bottomRightX = centreX + (this.distanceToCorner * Math.cos(Math.toRadians(bottomRightAngle)));
+		bottomRightY = centreY + (this.distanceToCorner * Math.sin(Math.toRadians(bottomRightAngle)));
+		
+		Path2D hitBox = new Path2D.Double();
+		
+		hitBox.moveTo(topLeftX, topLeftY);
+		hitBox.lineTo(toprightX, toprightY);
+		hitBox.lineTo(bottomLeftX, bottomLeftY);
+		hitBox.lineTo(bottomRightX, bottomRightY);
+		hitBox.closePath();
+		
+		return hitBox;
+		
+	}
+	
 	/**
 	 * 
 	 * @param x
@@ -206,5 +277,17 @@ public class Obstacle {
      */
 	public void setVelocityY(double newVelocity) {
     	velocityY = newVelocity * 100;
+	}
+	
+	/**
+	 * 
+	 * @param x1
+	 * @param y1
+	 * @param x2
+	 * @param y2
+	 * @return Uses Pyth. to return the absolute distance between two points
+	 */
+	public double getDistance(double x1, double y1, double x2, double y2) {
+		return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
 	}
 }

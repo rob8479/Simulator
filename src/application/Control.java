@@ -145,7 +145,7 @@ public class Control implements Initializable{
 		//Creates the new thread
 		//Note to self, Don't use "this." as this is not the class is anymore, but the seperate thread
 		//i.e. You can do drawTerrain(); but not this.drawTerrain();
-		robot = new Driveable(Robot, 0, 0, 0);
+		robot = new Driveable(Robot, 400, 400, 0);
 		obstacles.add(robot);
 		Moveable boxxy = new Moveable(Box,500,500,0);
 		obstacles.add(boxxy);
