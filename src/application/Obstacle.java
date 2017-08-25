@@ -49,8 +49,7 @@ public class Obstacle {
 	 * @param image			- Image for the obstacle
 	 * @param positionX		- x Co-ord in the world
 	 * @param positionY		- Y Co-ord in the world
-	 * @param width			- width of the obstacle
-	 * @param height		- height of the obstacle
+	 * @param angle			- Orientation of the Obstacle, 0 being defaults
 	 */
 	public Obstacle (Image image, double positionX, double positionY, double angle) {
 		this.image = image;
@@ -100,13 +99,13 @@ public class Obstacle {
 	 */
 	public void render(GraphicsContext gc) {
 		this.drawRotatedImage(gc, image, angle, positionX, positionY);
-		//Draw HitBoxes - Fro Debugging only
-		gc.setFill(Color.RED);
-		gc.strokeLine(topLeftX, topLeftY, toprightX, toprightY);
-		gc.strokeLine(toprightX, toprightY, bottomRightX, bottomRightY);
-		gc.strokeLine(bottomRightX, bottomRightY, bottomLeftX, bottomLeftY);
-		gc.strokeLine(bottomLeftX, bottomLeftY, topLeftX, topLeftY);
-
+		
+		//Draw HitBoxes - For Debugging only **WILL PUT A CERTAIN METHOD IN PLACE FOR THIS FOR CONTROL TO CALL**
+		//gc.setFill(Color.RED);
+		//gc.strokeLine(topLeftX, topLeftY, toprightX, toprightY);
+		//gc.strokeLine(toprightX, toprightY, bottomRightX, bottomRightY);
+		//gc.strokeLine(bottomRightX, bottomRightY, bottomLeftX, bottomLeftY);
+		//gc.strokeLine(bottomLeftX, bottomLeftY, topLeftX, topLeftY);
 	}
 	
 	/**
@@ -148,6 +147,9 @@ public class Obstacle {
 	 * the object. The Bounding box does not. This needs to be accurate to achieve accurate physics.
 	 */
 	public Path2D getHitBox() {
+		//First figure out the angles of the outer corners.
+		//This is a set number of the compass points, minus the original angle to the corner. We then add the current rotation
+		// So the angle from the centre of the shape to the corner is the original angle, plus the current rotation of the obstacle.
 		double topLeftAngle =  360 - Math.toDegrees(this.angleToCorner) + this.angle;
 		double topRightAngle = 270 - Math.toDegrees(this.angleToCorner) + this.angle;
 		double bottomleftAngle = 180 - Math.toDegrees(this.angleToCorner) + this.angle;
@@ -160,6 +162,8 @@ public class Obstacle {
 		
 		
 		//Calculate the Points
+		//We know the angle to these points, and the distance at which the corner is. So now it's a case of finding those points, which are the 
+		//distance away from the current centre.
 		toprightX = centreX + (this.distanceToCorner * Math.cos(Math.toRadians(topLeftAngle)));
 		toprightY = centreY + (this.distanceToCorner * Math.sin(Math.toRadians(topLeftAngle)));		 
 		topLeftX = centreX + (this.distanceToCorner * Math.cos(Math.toRadians(topRightAngle)));
@@ -169,8 +173,9 @@ public class Obstacle {
 		bottomRightX = centreX + (this.distanceToCorner * Math.cos(Math.toRadians(bottomRightAngle)));
 		bottomRightY = centreY + (this.distanceToCorner * Math.sin(Math.toRadians(bottomRightAngle)));
 		
+		//Create the Hitbox
 		Path2D hitBox = new Path2D.Double();
-		
+		//Creates an area by drawing a line through all of the corners (think turtle bot)
 		hitBox.moveTo(topLeftX, topLeftY);
 		hitBox.lineTo(toprightX, toprightY);
 		hitBox.lineTo(bottomLeftX, bottomLeftY);
@@ -178,7 +183,6 @@ public class Obstacle {
 		hitBox.closePath();
 		
 		return hitBox;
-		
 	}
 	
 	/**

@@ -20,7 +20,6 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 /**
  * 
@@ -69,6 +68,11 @@ public class Control implements Initializable{
     @FXML private ToggleGroup selectedMaterial;
     @FXML private Slider slider;
             
+    
+    //Images
+    Image Robot;
+    Image Box;
+    
 	/**
 	 * Launch of the program.
 	 * Currently set at generate a random Terrain.
@@ -90,6 +94,8 @@ public class Control implements Initializable{
 		pause.setDisable(true);
 		end.setDisable(true);
 		//Load the Images		
+		Robot = new Image(getClass().getResource("Robot.png").toExternalForm());
+		Box = new Image(getClass().getResource("Box.png").toExternalForm());
 		this.mainSimulationLoop();
     }
 	
@@ -140,25 +146,13 @@ public class Control implements Initializable{
 	    });
 				
 		
-		Image Robot = new Image(getClass().getResource("Robot.png").toExternalForm());
-		Image Box = new Image(getClass().getResource("Box.png").toExternalForm());
+
 		//Creates the new thread
 		//Note to self, Don't use "this." as this is not the class is anymore, but the seperate thread
 		//i.e. You can do drawTerrain(); but not this.drawTerrain();
 		robot = new Driveable(Robot, 400, 400, 0);
 		obstacles.add(robot);
-		Moveable boxxy = new Moveable(Box,500,500,0);
-		obstacles.add(boxxy);
-		
-		Moveable boxxy2 = new Moveable(Box,300,300,0);
-		obstacles.add(boxxy2);
-		
-		Moveable boxxy3 = new Moveable(Box,100,100,0);
-		obstacles.add(boxxy3);
-		
-		Moveable boxxy4 = new Moveable(Box,200,200,0);
-		obstacles.add(boxxy4);
-		
+	
 		DecimalFormat df = new DecimalFormat("#.##");
 		
 		new AnimationTimer() {
@@ -297,24 +291,26 @@ public class Control implements Initializable{
 	 * 
 	 */
 	public void buttonPressed(KeyEvent e) {
-		//Forward
-		if(e.getCode().toString().equals("W")) {
-			robot.setVelocity(+ 1);
-		}
-		
-		//Left
-		if(e.getCode().toString().equals("A")){
-			robot.setRotation(robot.getRotation() - 3);
-		}
-		
-		//Backwards
-		if(e.getCode().toString().equals("S")) {
-			robot.setVelocity(- 1);
-		}
-		
-		//Right
-		if(e.getCode().toString().equals("D")){
-			robot.setRotation(robot.getRotation() + 3);
+		if(this.isRunning) {
+			//Forward
+			if(e.getCode().toString().equals("W")) {
+				robot.setVelocity(+ 1);
+			}
+			
+			//Left
+			if(e.getCode().toString().equals("A")){
+				robot.setRotation(robot.getRotation() - 3);
+			}
+			
+			//Backwards
+			if(e.getCode().toString().equals("S")) {
+				robot.setVelocity(- 1);
+			}
+			
+			//Right
+			if(e.getCode().toString().equals("D")){
+				robot.setRotation(robot.getRotation() + 3);
+			}
 		}
 	}
 	
@@ -343,11 +339,19 @@ public class Control implements Initializable{
 	 * End the simulation
 	 */
 	public void endSimulation() {
+		//Change the Buttons
 		start.setDisable(false);
 		pause.setDisable(false);
 		end.setDisable(true);
 		this.isRunning = false;
 		
+		//Reset Everything
+		obstacles = new ArrayList<Obstacle>();
+		robot = new Driveable(Robot, 400, 400, 0);
+		obstacles.add(robot);
+		terrain.generateRandomTerrain();
+		this.drawTerrain();
+		this.drawObstacles();
 	}
 	
 	/**
@@ -374,7 +378,6 @@ public class Control implements Initializable{
 			//Elevation Height
 			int height = (int) slider.getValue();
 			
-			
 			//Check what the selected material is
 			switch(parts[1]) {
 			case "Water":	
@@ -395,6 +398,16 @@ public class Control implements Initializable{
 			case "Tile":
 				newNode = new Node(height,"Tile");
 				break;
+			case "Remove Obstacle":
+				//Delete the Obstacle at the given position
+				this.deleteObstacle(mouseX, mouseY);
+				return;
+			case "Moveable Obstacle":
+				this.addObstacle(mouseX, mouseY, true);
+				return;
+			case "Fixed Obstacle":
+				this.addObstacle(mouseX, mouseY, false);
+				return;
 			default:
 				newNode = new Node(height,"Sand");
 			}
@@ -407,6 +420,47 @@ public class Control implements Initializable{
 			this.drawObstacles();
 	
 		}	
+	}
+	
+	/**
+	 * 
+	 * @param x coordinate of the mouse
+	 * @param y coordinate of the mouse
+	 * Deletes the obstacle by removing it from the list of obstacles
+	 */
+	public void deleteObstacle(double x, double y) {
+		//Loop through
+		//Cannot use for each loop as causing a null pointer error
+		for(int i=0; i < obstacles.size(); i++) {
+			Obstacle temp = obstacles.get(i);
+			if(temp.selectedEntity(x, y)){
+				obstacles.remove(temp);
+			}
+		}
+		
+		//Redraw the world with the changes
+		this.drawTerrain();
+		this.drawObstacles();
+	}
+	
+	/**
+	 * 
+	 * @param x - Position of the mouse
+	 * @param y - Position of the mouse
+	 * @param moveable - True if it's moveable, else false
+	 */
+	public void addObstacle(double x, double y, boolean moveable) {
+		if(moveable) {
+			Moveable newObstacle = new Moveable(Box, x - Box.getWidth()/2, y - Box.getHeight()/2, 0);
+			obstacles.add(newObstacle);
+		} else {
+			Obstacle newObstacle = new Obstacle(Box, x - Box.getWidth()/2, y - Box.getHeight()/2, 0);
+			obstacles.add(newObstacle);
+		}
+		
+		//Redraw the world with the changes
+		this.drawTerrain();
+		this.drawObstacles();
 	}
 	
 }
