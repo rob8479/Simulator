@@ -150,7 +150,7 @@ public class Control implements Initializable{
 		//Creates the new thread
 		//Note to self, Don't use "this." as this is not the class is anymore, but the seperate thread
 		//i.e. You can do drawTerrain(); but not this.drawTerrain();
-		Sonar testSonar = new Sonar(this, 400, 400, 0, 500, 90, 90, 100, 90);
+		Sonar testSonar = new Sonar(this, 400, 400, 0, 200, 180, 180, 100, 90);
 		robot = new Driveable(Robot, 400, 400, 0,testSonar);
 		obstacles.add(robot);
 	
@@ -255,9 +255,12 @@ public class Control implements Initializable{
 	 */
 	public void checkCollisions() {
 		//For each Obstacle o in the list, check every other object that it is not o, l to see if it intersects
+		int numberOfChecks = 0;
 		for(Obstacle o: obstacles) {
 			for(Obstacle l: obstacles) {
-				if(!o.equals(l) ) {
+				//Only check objects within a 200cm radius of each other
+				if(!o.equals(l) && (o.getDistance(o.getXPosition(), o.getYPosition(), l.getXPosition(), l.getYPosition()) < 200)) {
+					numberOfChecks++;
 					if(o.intersects(l)) {
 						//System.out.println("COLLISION");
 						//Collision Handle
@@ -268,6 +271,8 @@ public class Control implements Initializable{
 				}
 			}
 		}
+		
+		System.out.println(numberOfChecks);
 		
 	}
 	
