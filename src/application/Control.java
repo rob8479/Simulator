@@ -255,12 +255,13 @@ public class Control implements Initializable{
 	 */
 	public void checkCollisions() {
 		//For each Obstacle o in the list, check every other object that it is not o, l to see if it intersects
-		int numberOfChecks = 0;
+		//int numberOfChecks = 0;
 		for(Obstacle o: obstacles) {
 			for(Obstacle l: obstacles) {
 				//Only check objects within a 200cm radius of each other
+				//TODO Update so it works based off the centres of obstacles
 				if(!o.equals(l) && (o.getDistance(o.getXPosition(), o.getYPosition(), l.getXPosition(), l.getYPosition()) < 200)) {
-					numberOfChecks++;
+					//numberOfChecks++;
 					if(o.intersects(l)) {
 						//System.out.println("COLLISION");
 						//Collision Handle
@@ -272,7 +273,7 @@ public class Control implements Initializable{
 			}
 		}
 		
-		System.out.println(numberOfChecks);
+		//System.out.println(numberOfChecks);
 		
 	}
 	
@@ -353,7 +354,7 @@ public class Control implements Initializable{
 		
 		//Reset Everything
 		obstacles = new ArrayList<Obstacle>();
-		Sonar testSonar = new Sonar(this, 400, 400, 0, 10, 90, 90, 30, 180);
+		Sonar testSonar = new Sonar(this, 400, 400, 0, 200, 180, 180, 100, 90);
 		robot = new Driveable(Robot, 400, 400, 0, testSonar);
 		obstacles.add(robot);
 		terrain.generateRandomTerrain();
