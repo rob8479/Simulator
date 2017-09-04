@@ -150,7 +150,7 @@ public class Control implements Initializable{
 		//Creates the new thread
 		//Note to self, Don't use "this." as this is not the class is anymore, but the seperate thread
 		//i.e. You can do drawTerrain(); but not this.drawTerrain();
-		Sonar testSonar = new Sonar(this, 400, 400, 0, 500, 90, 90, 100, 30);
+		Sonar testSonar = new Sonar(this, 400, 400, 0, 500, 90, 90, 100, 90);
 		robot = new Driveable(Robot, 400, 400, 0,testSonar);
 		obstacles.add(robot);
 	
@@ -469,10 +469,11 @@ public class Control implements Initializable{
 	 *  Called by the Sonar. Checks if the given point is an obstacle.
 	 * @return true if hits an obstacle, else false
 	 */
-	public boolean scanHit(double positionX, double positionY) {
+	public boolean scanHit(double positionX, double positionY, Obstacle x) {
 		//Scan all obstacles, see if the given co-ordinates hit an entity
 		for(Obstacle o: obstacles) {
-			if(o.selectedEntity(positionX, positionY)) {
+			//Make sure the object hitting is not infact the robot	
+			if(!o.equals(x) && o.selectedEntity(positionX, positionY)) {
 				return true;
 			}
 		}

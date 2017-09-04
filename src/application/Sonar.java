@@ -22,7 +22,6 @@ public class Sonar {
 	private int sensitivity;
 	private int increments;
 	private Control currentSimulation;
-	
 	/**
 	 * 
 	 * @param currentSimulation
@@ -122,7 +121,7 @@ public class Sonar {
 	 * Scans the surroundings from the sonar, and adds the distance of when it hits an obstacle, or when it hits a wall.
 	 * @return an array of length increments, containing a list of distances to an object
 	 */
-	public double[] scan(boolean drawScans) {
+	public double[] scan(boolean drawScans, Obstacle x) {
 		/*	   							Orientation
 		 * 									|		 
 		 * 									|
@@ -148,7 +147,7 @@ public class Sonar {
 				double scanPointX = this.positionX + (rangeIncrements * j) * Math.cos(Math.toRadians(currentAngle));
 				double scanPointY = this.positionY + (rangeIncrements * j) * Math.sin(Math.toRadians(currentAngle));
 				//Check if it hit's an obstacle
-				if(this.currentSimulation.scanHit(scanPointX, scanPointY)) {
+				if(this.currentSimulation.scanHit(scanPointX, scanPointY,x)) {
 					//If it has, return that distance
 					scans[i] = rangeIncrements * j;
 					break;

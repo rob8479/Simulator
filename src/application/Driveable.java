@@ -73,7 +73,7 @@ public class Driveable extends Obstacle {
     	sonar.setPositionY(sonarPosY);
     	sonar.setOrientation(angle);
     	//Scan the sonar
-    	return sonar.scan(true);
+    	return sonar.scan(true,this);
     	
     }
     
