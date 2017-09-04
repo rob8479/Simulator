@@ -19,7 +19,7 @@ import javafx.scene.transform.Rotate;
  */
 public class Obstacle {
 	
-	private Image image;
+	protected Image image;
 	protected double positionX;
 	protected double positionY;
 	private double width; //x
@@ -100,7 +100,7 @@ public class Obstacle {
 	public void render(GraphicsContext gc) {
 		this.drawRotatedImage(gc, image, angle, positionX, positionY);
 		
-		//Draw HitBoxes - For Debugging only **WILL PUT A CERTAIN METHOD IN PLACE FOR THIS FOR CONTROL TO CALL**
+		//Draw HitBoxes - For Debugging only **TODO WILL PUT A CERTAIN METHOD IN PLACE FOR THIS FOR CONTROL TO CALL**
 		//gc.setFill(Color.RED);
 		//gc.strokeLine(topLeftX, topLeftY, toprightX, toprightY);
 		//gc.strokeLine(toprightX, toprightY, bottomRightX, bottomRightY);

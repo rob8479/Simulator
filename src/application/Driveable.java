@@ -1,5 +1,6 @@
 package application;
 
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 /**
  * 
@@ -10,10 +11,13 @@ import javafx.scene.image.Image;
 public class Driveable extends Obstacle {
 
 	private double velocity;
+	private Sonar sonar;
 	
-	public Driveable(Image image, double positionX, double positionY, double angle) {
+	
+	public Driveable(Image image, double positionX, double positionY, double angle, Sonar sonar) {
 		super(image, positionX, positionY, angle);
 		// TODO Auto-generated constructor stub
+		this.sonar = sonar;
 	}
 	
 	/**
@@ -30,6 +34,7 @@ public class Driveable extends Obstacle {
 		/**
 		 * Because the top left corner is 0,0 - as apposed to the convential bottom left, the whole thing needs shifting by -90 degrees
 		 */
+		this.scanSonar();
 	}
 	/**
 	 * 
@@ -55,6 +60,21 @@ public class Driveable extends Obstacle {
      */
     public double getVelocity() {
     	return this.velocity;
+    }
+    
+    public double[] scanSonar() {
+    	//Calculate the position of the Sonar
+    	double centreX = this.positionX + image.getWidth()/2;
+    	double centreY = this.positionY + image.getHeight()/2;
+    	
+    	double sonarPosX = centreX + ((image.getHeight()/2) * Math.cos(Math.toRadians(angle - 90)));
+    	double sonarPosY = centreY + ((image.getHeight()/2) * Math.sin(Math.toRadians(angle - 90)));
+    	sonar.setPositionX(sonarPosX);
+    	sonar.setPositionY(sonarPosY);
+    	sonar.setOrientation(angle);
+    	//Scan the sonar
+    	return sonar.scan(true);
+    	
     }
     
     

@@ -150,7 +150,8 @@ public class Control implements Initializable{
 		//Creates the new thread
 		//Note to self, Don't use "this." as this is not the class is anymore, but the seperate thread
 		//i.e. You can do drawTerrain(); but not this.drawTerrain();
-		robot = new Driveable(Robot, 400, 400, 0);
+		Sonar testSonar = new Sonar(this, 400, 400, 0, 500, 90, 90, 100, 30);
+		robot = new Driveable(Robot, 400, 400, 0,testSonar);
 		obstacles.add(robot);
 	
 		DecimalFormat df = new DecimalFormat("#.##");
@@ -347,7 +348,8 @@ public class Control implements Initializable{
 		
 		//Reset Everything
 		obstacles = new ArrayList<Obstacle>();
-		robot = new Driveable(Robot, 400, 400, 0);
+		Sonar testSonar = new Sonar(this, 400, 400, 0, 10, 90, 90, 30, 180);
+		robot = new Driveable(Robot, 400, 400, 0, testSonar);
 		obstacles.add(robot);
 		terrain.generateRandomTerrain();
 		this.drawTerrain();
@@ -461,6 +463,28 @@ public class Control implements Initializable{
 		//Redraw the world with the changes
 		this.drawTerrain();
 		this.drawObstacles();
+	}
+	
+	/**
+	 *  Called by the Sonar. Checks if the given point is an obstacle.
+	 * @return true if hits an obstacle, else false
+	 */
+	public boolean scanHit(double positionX, double positionY) {
+		//Scan all obstacles, see if the given co-ordinates hit an entity
+		for(Obstacle o: obstacles) {
+			if(o.selectedEntity(positionX, positionY)) {
+				return true;
+			}
+		}
+		return false;	
+	}
+	
+	/**
+	 * 
+	 * @return The graphics context for the simulation
+	 */
+	public GraphicsContext getGraphicsContext() {
+		return this.gc;
 	}
 	
 }
