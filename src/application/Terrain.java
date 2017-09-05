@@ -1,5 +1,6 @@
 package application;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -111,6 +112,65 @@ public class Terrain {
 		int tempy = (int)y;
 		
 		return this.terrain[tempx][tempy];
+	}
+	
+	
+	public ArrayList<Wall> getWallsOfNode(double x, double y){
+		
+		x = x / this.nodeDiameter;
+		y = y / this.nodeDiameter;
+		int tempx = (int)x;
+		int tempy = (int)y;
+		
+		ArrayList<Wall> tempWalls = new ArrayList<Wall>();		
+		
+		//Make sure the point given is still within the grid
+		if(tempx < 0 || tempx > this.gridX || tempy < 0 || tempy > this.gridY) {
+			return tempWalls;
+		}
+		
+		//TODO - North and South don't work
+		
+		Node selectedNode = this.terrain[tempx][tempy];
+		//Check North
+		if(tempy != 0) {
+			Node temp = this.terrain[tempx][tempy - 1];
+			//If the difference between the north node and the current node is greater than 1, then it's a wall
+			if(selectedNode.getTerrainheight()  - temp.getTerrainheight() > 1) {
+				Wall newWall = new Wall(tempx * this.nodeDiameter, tempy * this.nodeDiameter, this.nodeDiameter, 2);
+				tempWalls.add(newWall);
+			}
+		}
+		//Check South
+		if(tempy != this.gridY) {
+			Node temp = this.terrain[tempx][tempy + 1];
+			//If the difference between the south node and the current node is greater than 1, then it's a wall
+			if(selectedNode.getTerrainheight()  - temp.getTerrainheight() > 1) {
+				Wall newWall = new Wall((tempx * this.nodeDiameter), (tempy * this.nodeDiameter) + this.nodeDiameter, this.nodeDiameter, 2);
+				tempWalls.add(newWall);
+			}
+		}
+		
+		//Check West
+		if(tempx != 0) {
+			Node temp = this.terrain[tempx - 1][tempy];
+			//If the difference between the west node and the current node is greater than 1, then it's a wall
+			if(selectedNode.getTerrainheight()  - temp.getTerrainheight() > 1) {
+				Wall newWall = new Wall((tempx * this.nodeDiameter), (tempy * this.nodeDiameter), 2, this.nodeDiameter);
+				tempWalls.add(newWall);
+			}
+		}
+		
+		//Check East
+		if(tempx != this.gridX) {
+			Node temp = this.terrain[tempx + 1][tempy];
+			//If the difference between the west node and the current node is greater than 1, then it's a wall
+			if(selectedNode.getTerrainheight() - temp.getTerrainheight() > 1) {
+				Wall newWall = new Wall((tempx * this.nodeDiameter) + this.nodeDiameter, (tempy * this.nodeDiameter), 2, this.nodeDiameter);
+				tempWalls.add(newWall);
+			}
+		}
+		return tempWalls;
 	}
 		
 }

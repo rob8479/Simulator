@@ -482,6 +482,17 @@ public class Control implements Initializable{
 			if(!o.equals(x) && o.selectedEntity(positionX, positionY)) {
 				return true;
 			}
+			//If It's a wall
+			ArrayList<Wall> wallCheck = terrain.getWallsOfNode(positionX, positionY);
+			if(wallCheck.size() > 0) {
+				for(Wall w: wallCheck) {
+					if(w.sonarIntersects(positionX, positionY)) {
+						return true;
+					}
+				}
+			}
+			
+			
 		}
 		return false;	
 	}
