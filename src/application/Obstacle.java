@@ -27,7 +27,8 @@ public class Obstacle {
 	protected double angle;//Direction we are facing
 	protected double velocityX;
 	protected double velocityY;
-	
+	protected double velocity;
+
 	//The 4 corners of the object
 	private double distanceToCorner;
 	private double angleToCorner;
@@ -86,10 +87,6 @@ public class Obstacle {
 		 * Because the top left corner is 0,0 - as apposed to the convential bottom left, the whole thing needs shifting by -90 degrees
 		 */
 		
-		
-		//COME BACK TO - This assumes there is no friction in the world
-		velocityX = 0;
-		velocityY = 0;
 	}
 	
 	/**
@@ -294,4 +291,21 @@ public class Obstacle {
 	public double getDistance(double x1, double y1, double x2, double y2) {
 		return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
 	}
+	
+    /**
+     * 
+     * @param newVelocity - New Desired Velocity in m/s
+     * Set's the Velocity in the x axis of the object equal to the given param.
+     */
+    public void setVelocity(double newVelocity) {
+    	velocity = newVelocity * 100;
+    }
+    
+    
+    /**
+     * @return The velocity of the robot
+     */
+    public double getVelocity() {
+    	return this.velocity;
+    }
 }

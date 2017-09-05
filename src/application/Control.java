@@ -89,7 +89,8 @@ public class Control implements Initializable{
 		obstacles = new ArrayList<Obstacle>();
 		terrain = new Terrain(20, 20, 100); //20 by 20 m terrain. 100 pixels, 1 pixel = 1 cm.
 		physics = new Physics(); //Initialise the physic's engine
-		terrain.generateRandomTerrain();
+		//terrain.generateRandomTerrain();
+		terrain.generateFlatTerrain();
 		isRunning = false;
 		pause.setDisable(true);
 		end.setDisable(true);
@@ -270,6 +271,25 @@ public class Control implements Initializable{
 						physics.testPushBox(o, l);
 					}
 				}
+			}
+		}
+		
+		//Check for Collisions with walls, for now , set the velocity equal to 0
+		for(Obstacle o: obstacles) {
+			if(o.velocityX != 0 && o.velocityY != 0) {
+				ArrayList<Wall> walls = terrain.getWallsOfNode(o.positionX, o.positionY,gc);
+				for(Wall w: walls) {
+					if(w.intersects(o)) {
+						//Case for if it's driveable (slightly different)
+						if(o.toString().contains("Driveable")) {
+							o.setVelocity(0);
+						} else {
+							o.setVelocityX(0);
+							o.setVelocityY(0);
+						}
+					}
+				}
+				
 			}
 		}
 		
@@ -483,7 +503,7 @@ public class Control implements Initializable{
 				return true;
 			}
 			//If It's a wall
-			ArrayList<Wall> wallCheck = terrain.getWallsOfNode(positionX, positionY);
+			ArrayList<Wall> wallCheck = terrain.getWallsOfNode(positionX, positionY,gc);
 			if(wallCheck.size() > 0) {
 				for(Wall w: wallCheck) {
 					if(w.sonarIntersects(positionX, positionY)) {

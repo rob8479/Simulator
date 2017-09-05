@@ -10,7 +10,6 @@ import javafx.scene.image.Image;
  */
 public class Driveable extends Obstacle {
 
-	private double velocity;
 	private Sonar sonar;
 	
 	
@@ -45,22 +44,7 @@ public class Driveable extends Obstacle {
     	angle = rotation;
     }
     
-    /**
-     * 
-     * @param newVelocity - New Desired Velocity in m/s
-     * Set's the Velocity in the x axis of the object equal to the given param.
-     */
-    public void setVelocity(double newVelocity) {
-    	velocity = newVelocity * 100;
-    }
-    
-    
-    /**
-     * @return The velocity of the robot
-     */
-    public double getVelocity() {
-    	return this.velocity;
-    }
+
     
     public double[] scanSonar() {
     	//Calculate the position of the Sonar

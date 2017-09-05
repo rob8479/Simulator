@@ -3,6 +3,8 @@ package application;
 import java.util.ArrayList;
 import java.util.Random;
 
+import javafx.scene.canvas.GraphicsContext;
+
 /**
  * 
  * @author Robert Sadler
@@ -22,6 +24,17 @@ public class Terrain {
 		this.nodeDiameter = newnodeDiameter;
 		terrain = new Node[gridX][gridY];
 	}
+	
+	/**
+	 * Generates a flat terrain
+	 */
+	public void generateFlatTerrain() {
+		for(int i = 0 ; i < gridX; i++) {
+			for(int j = 0; j < gridY; j++)
+				terrain[i][j] = new Node(0,"Carpet");
+		}
+	}
+	
 	
 	//Will change to have a noise function to create a "natural" feeling terrain
 	/**
@@ -115,7 +128,7 @@ public class Terrain {
 	}
 	
 	
-	public ArrayList<Wall> getWallsOfNode(double x, double y){
+	public ArrayList<Wall> getWallsOfNode(double x, double y, GraphicsContext gc){
 		
 		x = x / this.nodeDiameter;
 		y = y / this.nodeDiameter;
@@ -124,30 +137,31 @@ public class Terrain {
 		
 		ArrayList<Wall> tempWalls = new ArrayList<Wall>();		
 		
-		//Make sure the point given is still within the grid
 		if(tempx < 0 || tempx > this.gridX || tempy < 0 || tempy > this.gridY) {
 			return tempWalls;
 		}
-		
-		//TODO - North and South don't work
 		
 		Node selectedNode = this.terrain[tempx][tempy];
 		//Check North
 		if(tempy != 0) {
 			Node temp = this.terrain[tempx][tempy - 1];
 			//If the difference between the north node and the current node is greater than 1, then it's a wall
-			if(selectedNode.getTerrainheight()  - temp.getTerrainheight() > 1) {
-				Wall newWall = new Wall(tempx * this.nodeDiameter, tempy * this.nodeDiameter, this.nodeDiameter, 2);
+			if(Math.abs(temp.getTerrainheight() - selectedNode.getTerrainheight()) > 1) {
+				Wall newWall = new Wall(tempx * this.nodeDiameter, (tempy * this.nodeDiameter), this.nodeDiameter, 3);
 				tempWalls.add(newWall);
+				//Draw Hitbox
+				gc.fillRect(tempx * this.nodeDiameter, (tempy * this.nodeDiameter) , this.nodeDiameter, 3);
 			}
 		}
 		//Check South
 		if(tempy != this.gridY) {
 			Node temp = this.terrain[tempx][tempy + 1];
 			//If the difference between the south node and the current node is greater than 1, then it's a wall
-			if(selectedNode.getTerrainheight()  - temp.getTerrainheight() > 1) {
-				Wall newWall = new Wall((tempx * this.nodeDiameter), (tempy * this.nodeDiameter) + this.nodeDiameter, this.nodeDiameter, 2);
+			if(Math.abs(temp.getTerrainheight() - selectedNode.getTerrainheight()) > 1) {
+				Wall newWall = new Wall((tempx * this.nodeDiameter), (tempy * this.nodeDiameter) + this.nodeDiameter, this.nodeDiameter, 3);
 				tempWalls.add(newWall);
+				//Draw Hitbox
+				gc.fillRect((tempx * this.nodeDiameter), (tempy * this.nodeDiameter) + this.nodeDiameter, this.nodeDiameter, 3);
 			}
 		}
 		
@@ -155,9 +169,11 @@ public class Terrain {
 		if(tempx != 0) {
 			Node temp = this.terrain[tempx - 1][tempy];
 			//If the difference between the west node and the current node is greater than 1, then it's a wall
-			if(selectedNode.getTerrainheight()  - temp.getTerrainheight() > 1) {
-				Wall newWall = new Wall((tempx * this.nodeDiameter), (tempy * this.nodeDiameter), 2, this.nodeDiameter);
+			if(Math.abs(temp.getTerrainheight() - selectedNode.getTerrainheight()) > 1) {
+				Wall newWall = new Wall((tempx * this.nodeDiameter), (tempy * this.nodeDiameter), 3, this.nodeDiameter);
 				tempWalls.add(newWall);
+				//Draw Hitbox
+				gc.fillRect((tempx * this.nodeDiameter), (tempy * this.nodeDiameter), 3, this.nodeDiameter);
 			}
 		}
 		
@@ -165,9 +181,11 @@ public class Terrain {
 		if(tempx != this.gridX) {
 			Node temp = this.terrain[tempx + 1][tempy];
 			//If the difference between the west node and the current node is greater than 1, then it's a wall
-			if(selectedNode.getTerrainheight() - temp.getTerrainheight() > 1) {
-				Wall newWall = new Wall((tempx * this.nodeDiameter) + this.nodeDiameter, (tempy * this.nodeDiameter), 2, this.nodeDiameter);
+			if(Math.abs(temp.getTerrainheight() - selectedNode.getTerrainheight()) > 1) {
+				Wall newWall = new Wall((tempx * this.nodeDiameter) + this.nodeDiameter, (tempy * this.nodeDiameter), 3, this.nodeDiameter);
 				tempWalls.add(newWall);
+				//Draw Hitbox
+				gc.fillRect((tempx * this.nodeDiameter) + this.nodeDiameter, (tempy * this.nodeDiameter), 3, this.nodeDiameter);
 			}
 		}
 		return tempWalls;
