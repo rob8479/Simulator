@@ -10,8 +10,8 @@ import javafx.scene.image.Image;
  */
 public class Moveable extends Obstacle {
 
-	public Moveable(Image image, double positionX, double positionY,double angle) {
-		super(image, positionX, positionY,angle);
+	public Moveable(Image image, double positionX, double positionY,double angle,double mass) {
+		super(image, positionX, positionY,angle, mass);
 	}
 		
 	/**

@@ -1,7 +1,5 @@
 package application;
 
-import javafx.scene.paint.Color;
-
 /**
  * 
  * @author Robert Sadler

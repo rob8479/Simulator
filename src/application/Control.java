@@ -37,7 +37,8 @@ public class Control implements Initializable{
     
     private Driveable robot;
     private Physics physics;
-    
+    private Ball ball;
+    private Ball ball2;
     
     private Boolean isRunning;
     
@@ -84,11 +85,10 @@ public class Control implements Initializable{
 	 */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-		// TODO Auto-generated method stub
 		gc = zoomedMap.getGraphicsContext2D();
 		obstacles = new ArrayList<Obstacle>();
 		terrain = new Terrain(20, 20, 100); //20 by 20 m terrain. 100 pixels, 1 pixel = 1 cm.
-		physics = new Physics(); //Initialise the physic's engine
+		physics = new Physics(obstacles,terrain,gc); //Initialise the physic's engine
 		//terrain.generateRandomTerrain();
 		terrain.generateFlatTerrain();
 		isRunning = false;
@@ -151,10 +151,24 @@ public class Control implements Initializable{
 		//Creates the new thread
 		//Note to self, Don't use "this." as this is not the class is anymore, but the seperate thread
 		//i.e. You can do drawTerrain(); but not this.drawTerrain();
-		Sonar testSonar = new Sonar(this, 400, 400, 0, 200, 180, 180, 100, 90);
-		robot = new Driveable(Robot, 400, 400, 0,testSonar);
+		Sonar testSonar = new Sonar(this, 600, 400, 0, 200, 180, 180, 100, 90);
+		robot = new Driveable(Robot, 600, 400, 0,testSonar,100);
 		obstacles.add(robot);
-	
+		
+		
+		Moveable newObstacle = new Moveable(Box, 500, 10, 0,10);
+		obstacles.add(newObstacle);
+		
+		Moveable newObstacle2 = new Moveable(Box, 10, 10, 0,10);
+		obstacles.add(newObstacle2);
+		
+		
+		newObstacle.setVelocityX(-1);
+		newObstacle.setVelocityY(0);
+		
+		newObstacle2.setVelocityX(1);
+		newObstacle2.setVelocityY(0);
+		
 		DecimalFormat df = new DecimalFormat("#.##");
 		
 		new AnimationTimer() {
@@ -169,7 +183,7 @@ public class Control implements Initializable{
 					if(terrainConfig.isSelected()) {
 						pauseSimulation();
 					}			
-					
+										
 					//Entity Stats
 					if(selectedEntity != null) {
 						xPos.setText(selectedEntity.getXPosition() + "");					
@@ -191,7 +205,7 @@ public class Control implements Initializable{
 					
 					//Main Loop
 					drawTerrain(); //Draw the Terrain
-					checkCollisions(); //Check the collisions
+					physics.checkCollisions(); //Check the collisions
 					updatePositions(elapsedTime);
 					drawObstacles(); 	//Then Draw the position of all obstacles
 				}else {
@@ -251,51 +265,6 @@ public class Control implements Initializable{
 		}
 	}
 	
-	/**
-	 * Check if any collision has occurred
-	 */
-	public void checkCollisions() {
-		//For each Obstacle o in the list, check every other object that it is not o, l to see if it intersects
-		//int numberOfChecks = 0;
-		for(Obstacle o: obstacles) {
-			for(Obstacle l: obstacles) {
-				//Only check objects within a 200cm radius of each other
-				//TODO Update so it works based off the centres of obstacles
-				if(!o.equals(l) && (o.getDistance(o.getXPosition(), o.getYPosition(), l.getXPosition(), l.getYPosition()) < 200)) {
-					//numberOfChecks++;
-					if(o.intersects(l)) {
-						//System.out.println("COLLISION");
-						//Collision Handle
-						//Need a check to make sure we don't have this transative relation
-						//I.e. A Collides B , Does not then check B Collides A
-						physics.testPushBox(o, l);
-					}
-				}
-			}
-		}
-		
-		//Check for Collisions with walls, for now , set the velocity equal to 0
-		for(Obstacle o: obstacles) {
-			if(o.velocityX != 0 && o.velocityY != 0) {
-				ArrayList<Wall> walls = terrain.getWallsOfNode(o.positionX, o.positionY,gc);
-				for(Wall w: walls) {
-					if(w.intersects(o)) {
-						//Case for if it's driveable (slightly different)
-						if(o.toString().contains("Driveable")) {
-							o.setVelocity(0);
-						} else {
-							o.setVelocityX(0);
-							o.setVelocityY(0);
-						}
-					}
-				}
-				
-			}
-		}
-		
-		//System.out.println(numberOfChecks);
-		
-	}
 	
 	/**
 	 * Calculate the position of the Obstacles
@@ -338,6 +307,17 @@ public class Control implements Initializable{
 			if(e.getCode().toString().equals("D")){
 				robot.setRotation(robot.getRotation() + 3);
 			}
+			
+			
+			//Test
+			if(e.getCode().toString().equals("P")) {
+				ball.setVelocityX(1);
+			}
+			
+			//Test
+			if(e.getCode().toString().equals("O")) {
+				ball2.setVelocityX(-1);
+			}
 		}
 	}
 	
@@ -375,7 +355,7 @@ public class Control implements Initializable{
 		//Reset Everything
 		obstacles = new ArrayList<Obstacle>();
 		Sonar testSonar = new Sonar(this, 400, 400, 0, 200, 180, 180, 100, 90);
-		robot = new Driveable(Robot, 400, 400, 0, testSonar);
+		robot = new Driveable(Robot, 400, 400, 0, testSonar,0);
 		obstacles.add(robot);
 		terrain.generateRandomTerrain();
 		this.drawTerrain();
@@ -479,10 +459,10 @@ public class Control implements Initializable{
 	 */
 	public void addObstacle(double x, double y, boolean moveable) {
 		if(moveable) {
-			Moveable newObstacle = new Moveable(Box, x - Box.getWidth()/2, y - Box.getHeight()/2, 0);
+			Moveable newObstacle = new Moveable(Box, x - Box.getWidth()/2, y - Box.getHeight()/2, 0,0);
 			obstacles.add(newObstacle);
 		} else {
-			Obstacle newObstacle = new Obstacle(Box, x - Box.getWidth()/2, y - Box.getHeight()/2, 0);
+			Obstacle newObstacle = new Obstacle(Box, x - Box.getWidth()/2, y - Box.getHeight()/2, 0,0);
 			obstacles.add(newObstacle);
 		}
 		
@@ -499,8 +479,11 @@ public class Control implements Initializable{
 		//Scan all obstacles, see if the given co-ordinates hit an entity
 		for(Obstacle o: obstacles) {
 			//Make sure the object hitting is not infact the robot	
-			if(!o.equals(x) && o.selectedEntity(positionX, positionY)) {
-				return true;
+			//Optimise, only check when the points are within 100 cm of each other
+			if(Math.abs(o.getXPosition() - positionX) < 100 && Math.abs(o.getYPosition() - positionY) < 100) {
+				if(!o.equals(x) && o.selectedEntity(positionX, positionY)) {
+					return true;
+				}
 			}
 			//If It's a wall
 			ArrayList<Wall> wallCheck = terrain.getWallsOfNode(positionX, positionY,gc);
@@ -510,9 +493,7 @@ public class Control implements Initializable{
 						return true;
 					}
 				}
-			}
-			
-			
+			}			
 		}
 		return false;	
 	}

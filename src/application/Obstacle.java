@@ -1,9 +1,7 @@
 package application;
 
-import java.awt.Polygon;
 import java.awt.geom.Area;
 import java.awt.geom.Path2D;
-
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -22,18 +20,19 @@ public class Obstacle {
 	protected Image image;
 	protected double positionX;
 	protected double positionY;
-	private double width; //x
-	private double height; //y
+	protected double width; //x
+	protected double height; //y
 	protected double angle;//Direction we are facing
 	protected double velocityX;
 	protected double velocityY;
 	protected double velocity;
+	protected double mass;
+	protected double previousPositionX;
+	protected double previousPositionY;
 
 	//The 4 corners of the object
 	private double distanceToCorner;
 	private double angleToCorner;
-	
-	
 	
 	double topLeftX;
 	double topLeftY;
@@ -43,7 +42,6 @@ public class Obstacle {
 	double bottomLeftY ;
 	double bottomRightX ;
 	double bottomRightY ;
-	
 		
 	/**
 	 * 
@@ -52,7 +50,7 @@ public class Obstacle {
 	 * @param positionY		- Y Co-ord in the world
 	 * @param angle			- Orientation of the Obstacle, 0 being defaults
 	 */
-	public Obstacle (Image image, double positionX, double positionY, double angle) {
+	public Obstacle (Image image, double positionX, double positionY, double angle, double mass) {
 		this.image = image;
 		this.positionX = positionX;
 		this.positionY = positionY;
@@ -61,6 +59,7 @@ public class Obstacle {
 		this.angle = angle;
 		this.velocityX = 0;
 		this.velocityY = 0;
+		this.mass = mass;
 		
 		//Centre of the Object
 		double centreX = this.positionX + (image.getWidth() / 2);
@@ -78,6 +77,8 @@ public class Obstacle {
 	 */
 	public void update(double elapsedTime) {
 		//Position is equal to the Old Position, plus the velocity in that direction
+		this.previousPositionX = positionX;
+		this.previousPositionY = positionY;
 		positionX += (velocityX * elapsedTime);
 		positionY += (velocityY * elapsedTime);
 		
@@ -99,10 +100,10 @@ public class Obstacle {
 		
 		//Draw HitBoxes - For Debugging only **TODO WILL PUT A CERTAIN METHOD IN PLACE FOR THIS FOR CONTROL TO CALL**
 		//gc.setFill(Color.RED);
-		//gc.strokeLine(topLeftX, topLeftY, toprightX, toprightY);
-		//gc.strokeLine(toprightX, toprightY, bottomRightX, bottomRightY);
-		//gc.strokeLine(bottomRightX, bottomRightY, bottomLeftX, bottomLeftY);
-		//gc.strokeLine(bottomLeftX, bottomLeftY, topLeftX, topLeftY);
+		gc.strokeLine(topLeftX, topLeftY, toprightX, toprightY);
+		gc.strokeLine(toprightX, toprightY, bottomRightX, bottomRightY);
+		gc.strokeLine(bottomRightX, bottomRightY, bottomLeftX, bottomLeftY);
+		gc.strokeLine(bottomLeftX, bottomLeftY, topLeftX, topLeftY);
 	}
 	
 	/**
@@ -183,6 +184,19 @@ public class Obstacle {
 	}
 	
 	/**
+	 * Similar to intersect with Obstacle, except with walls
+	 * TODO - Change Wall to have the super Obstacle
+	 * @param w - The wall that we are checking if it collides with
+	 * @return
+	 */
+	public boolean intersectsWall(Wall w) {
+		Path2D hitBox = this.getHitBox();
+		Area area = new Area(hitBox);
+		area.intersect(new Area (w.getHitBox()));
+		return !area.isEmpty();
+	}
+	
+	/**
 	 * 
 	 * @param x
 	 * @param y
@@ -251,7 +265,7 @@ public class Obstacle {
      * @return The current velocity of the object in the X axis.
      */
     public double getVelocityX() {
-    	return this.velocityX;
+    	return this.velocityX/100;
     }
     
     /**
@@ -259,7 +273,7 @@ public class Obstacle {
      * @return The current velocity of the object in the Y axis.
      */
     public double getVelocityY() {
-    	return this.velocityY;
+    	return this.velocityY/100;
     }
     
     /**
@@ -306,6 +320,35 @@ public class Obstacle {
      * @return The velocity of the robot
      */
     public double getVelocity() {
-    	return this.velocity;
+    	return Math.sqrt(this.velocityX * this.velocityX + this.velocityY * this.velocityY);
+    }
+    
+    /**
+     * Called by the Physics engine. Moves the object back to it's previous position in the last frame, undoing any indentation within
+     * the current collision.
+     * 
+     * Note: This is only effective if the simulation is running at a high frame-rate. This is just an efficent way of calculating a point
+     * before the collision. A low frame rate will lead to vastly inaccurate collision handling and noticable teleportation of objects.
+     */
+    public void reverseCollision() {
+    	this.positionX = this.previousPositionX;
+    	this.positionY = this.previousPositionY;
+    }
+    
+    /**
+     * 
+     * @return The mass of the obstacle
+     */
+    public double getMass() {
+    	return this.mass;
+    }
+    
+    
+    public double getCentreX() {
+    	return this.positionX + this.width/2;
+    }
+    
+    public double getCentreY() {
+    	return this.positionY + this.height/2;
     }
 }

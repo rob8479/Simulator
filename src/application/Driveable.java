@@ -1,6 +1,4 @@
 package application;
-
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 /**
  * 
@@ -13,8 +11,8 @@ public class Driveable extends Obstacle {
 	private Sonar sonar;
 	
 	
-	public Driveable(Image image, double positionX, double positionY, double angle, Sonar sonar) {
-		super(image, positionX, positionY, angle);
+	public Driveable(Image image, double positionX, double positionY, double angle, Sonar sonar,double mass) {
+		super(image, positionX, positionY, angle,mass);
 		// TODO Auto-generated constructor stub
 		this.sonar = sonar;
 	}
@@ -28,6 +26,8 @@ public class Driveable extends Obstacle {
 	public void update(double elapsedTime) {
 		velocityX = (Math.cos(Math.toRadians(angle - 90)) * velocity) * elapsedTime;
 		velocityY = (Math.sin(Math.toRadians(angle - 90)) * velocity) * elapsedTime;
+		this.previousPositionX = positionX;
+		this.previousPositionY = positionY;
 		positionX += velocityX;	
 		positionY += velocityY;
 		/**
@@ -51,13 +51,13 @@ public class Driveable extends Obstacle {
     	double centreX = this.positionX + image.getWidth()/2;
     	double centreY = this.positionY + image.getHeight()/2;
     	
-    	double sonarPosX = centreX + ((image.getHeight()/2) * Math.cos(Math.toRadians(angle - 90)));
-    	double sonarPosY = centreY + ((image.getHeight()/2) * Math.sin(Math.toRadians(angle - 90)));
+    	double sonarPosX = centreX + ((image.getHeight()/2 - 20) * Math.cos(Math.toRadians(angle - 90)));
+    	double sonarPosY = centreY + ((image.getHeight()/2 - 20) * Math.sin(Math.toRadians(angle - 90)));
     	sonar.setPositionX(sonarPosX);
     	sonar.setPositionY(sonarPosY);
     	sonar.setOrientation(angle);
     	//Scan the sonar
-    	return sonar.scan(true,this);
+    	return sonar.scan(false,this);
     	
     }
     

@@ -1,6 +1,5 @@
 package application;
 
-import java.awt.Shape;
 import java.awt.geom.Area;
 import java.awt.geom.Path2D;
 
@@ -12,6 +11,7 @@ public class Wall {
 	private double positionY;
 	private double width;
 	private double height;
+	private double mass;
 	
 	/**
 	 * 
@@ -26,6 +26,7 @@ public class Wall {
 		this.positionY = positionY;
 		this.width = width;
 		this.height = height;
+		this.mass = 1000000000; //Set it so big that it basically doesn't move
 	}
 	
 	/**
@@ -79,6 +80,22 @@ public class Wall {
 		hitBox.closePath();
 		
 		return hitBox;
+	}
+	
+	/**
+	 * 
+	 * @return The mass of the wall
+	 */
+	public double getMass() {
+		return this.mass;
+	}
+	
+	public double getXPosition() {
+		return this.positionX + width/2;
+	}
+	
+	public double getYPosition() {
+		return this.positionY + height/2;
 	}
 	
 }
