@@ -119,7 +119,7 @@ public class Sonar {
 	 * Scans the surroundings from the sonar, and adds the distance of when it hits an obstacle, or when it hits a wall.
 	 * @return an array of length increments, containing a list of distances to an object
 	 */
-	public double[] scan(boolean drawScans, Obstacle x) {
+	public double[] scan(Obstacle x) {
 		/*	   							Orientation
 		 * 									|		 
 		 * 									|
@@ -152,7 +152,7 @@ public class Sonar {
 				}
 				
 				//If the scans are being asked to draw a line to the point
-				if(drawScans) {
+				if(Values.DRAWSONAR) {
 					this.currentSimulation.getGraphicsContext().strokeLine(this.positionX, this.positionY, scanPointX, scanPointY);
 				}
 				//If no point is found, set the scan point's Distance as -1

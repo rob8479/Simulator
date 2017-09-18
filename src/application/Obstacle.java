@@ -27,8 +27,7 @@ public class Obstacle {
 	protected double velocityY;
 	protected double velocity;
 	protected double mass;
-	protected double previousPositionX;
-	protected double previousPositionY;
+		
 
 	//The 4 corners of the object
 	private double distanceToCorner;
@@ -77,8 +76,11 @@ public class Obstacle {
 	 */
 	public void update(double elapsedTime) {
 		//Position is equal to the Old Position, plus the velocity in that direction
-		this.previousPositionX = positionX;
-		this.previousPositionY = positionY;
+		
+		
+		//If moving too slowly, just remove all velocity
+		
+		
 		positionX += (velocityX * elapsedTime);
 		positionY += (velocityY * elapsedTime);
 		
@@ -96,14 +98,19 @@ public class Obstacle {
 	 * Called by the main simulation loop to draw the obstacle at it's current position
 	 */
 	public void render(GraphicsContext gc) {
-		this.drawRotatedImage(gc, image, angle, positionX, positionY);
+		
+		if(Values.DRAWOBSTACLES) {
+			this.drawRotatedImage(gc, image, angle, positionX, positionY);
+		}
 		
 		//Draw HitBoxes - For Debugging only **TODO WILL PUT A CERTAIN METHOD IN PLACE FOR THIS FOR CONTROL TO CALL**
-		//gc.setFill(Color.RED);
-		gc.strokeLine(topLeftX, topLeftY, toprightX, toprightY);
-		gc.strokeLine(toprightX, toprightY, bottomRightX, bottomRightY);
-		gc.strokeLine(bottomRightX, bottomRightY, bottomLeftX, bottomLeftY);
-		gc.strokeLine(bottomLeftX, bottomLeftY, topLeftX, topLeftY);
+		if(Values.DRAWHITBOX) {
+			gc.setFill(Color.RED);
+			gc.strokeLine(topLeftX, topLeftY, toprightX, toprightY);
+			gc.strokeLine(toprightX, toprightY, bottomRightX, bottomRightY);
+			gc.strokeLine(bottomRightX, bottomRightY, bottomLeftX, bottomLeftY);
+			gc.strokeLine(bottomLeftX, bottomLeftY, topLeftX, topLeftY);
+		}
 	}
 	
 	/**
@@ -306,16 +313,7 @@ public class Obstacle {
 		return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
 	}
 	
-    /**
-     * 
-     * @param newVelocity - New Desired Velocity in m/s
-     * Set's the Velocity in the x axis of the object equal to the given param.
-     */
-    public void setVelocity(double newVelocity) {
-    	velocity = newVelocity * 100;
-    }
-    
-    
+
     /**
      * @return The velocity of the robot
      */
@@ -323,17 +321,6 @@ public class Obstacle {
     	return Math.sqrt(this.velocityX * this.velocityX + this.velocityY * this.velocityY);
     }
     
-    /**
-     * Called by the Physics engine. Moves the object back to it's previous position in the last frame, undoing any indentation within
-     * the current collision.
-     * 
-     * Note: This is only effective if the simulation is running at a high frame-rate. This is just an efficent way of calculating a point
-     * before the collision. A low frame rate will lead to vastly inaccurate collision handling and noticable teleportation of objects.
-     */
-    public void reverseCollision() {
-    	this.positionX = this.previousPositionX;
-    	this.positionY = this.previousPositionY;
-    }
     
     /**
      * 
@@ -351,4 +338,6 @@ public class Obstacle {
     public double getCentreY() {
     	return this.positionY + this.height/2;
     }
+    
+    
 }

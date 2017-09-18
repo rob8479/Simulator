@@ -23,8 +23,19 @@ public class Physics {
 		this.gc = gc;
 	}
 	
+	/**
+	 * Method called by the simulator, that excutes all physics for the object.
+	 */
+	public void propogatePhysics() {
+		this.checkCollisions();
+		this.friction();
+	}
 	
-	public void checkCollisions() {
+	
+	/**
+	 * Loops through all obstacles, and see if any of them intersect the other
+	 */
+	private void checkCollisions() {
 		//Check vs. Walls first
 		for(Obstacle o: obstacles) {
 			//Optimisation: No point checking objects which are already stationary
@@ -33,23 +44,11 @@ public class Physics {
 				ArrayList<Wall> walls = terrain.getWallsOfNode(o.positionX, o.positionY,gc);
 				//Check that any of the objects are in contact with the wall
 				for(Wall w: walls) {
-					if(o.toString().contains("Ball")){
-							Ball temp = (Ball)o;
-							if(temp.intersectsWall(w)) {
-								//temp.reverseCollision();
-								this.handleBallWall(temp,w);
-							}
-					} else {
-						if(o.intersectsWall(w)) {
-							this.handleMoveableWall(o, w);
-						}
+					if(o.intersectsWall(w)) {
+						this.handleMoveableWall(o, w);
 					}
-					
-					
 				}
-			
 			}
-				
 		}
 		
 		//Now Check for Obstacles vs. Obstacles
@@ -63,33 +62,86 @@ public class Physics {
 						//Need a check to make sure we don't have this transative relation
 						//I.e. A Collides B , Does not then check B Collides A
 						this.handleObstacleObstacle(o, l);
-						//Undo the collisions so they don't just keep colliding over and over
-						o.reverseCollision();
-						l.reverseCollision();
 					}
 				}
 			}
-		}
-		
+		}	
 	}
 
 	
 	/**
 	 * 
-	 * @param o - The ball that collided with the wall
-	 * @param w - The wall that the ball collided with
+	 * @param o Obstacle
+	 * @param w Wall
 	 * 
-	 * A ball bouncing against a Wall is an elastic collision - i.e. , it will bounce
+	 * Similar to Obstacle vs. Obstacle, except a Wall has infinite mass, and no velocity.
 	 */
-	private void handleBallWall(Ball b, Wall w) {
+	private void handleMoveableWall(Obstacle a, Wall w) {
+				
+		double rvx = 0 - a.getVelocityX();
+		double rvy = 0 - a.getVelocityY();
+
+		//Get the centre of the Wall
+		double wallX = terrain.getCentreOfNode(a.getCentreX());
+		double wallY = terrain.getCentreOfNode(a.getCentreY());
 		
+		switch(w.getPosition()) {
+		case "North":
+			wallY -= terrain.getNodeDiameter();
+			break;
+		case "South":
+			wallY += terrain.getNodeDiameter();
+			break;
+		case "West":
+			wallX -= terrain.getNodeDiameter();
+			break;
+		case "East":
+			wallX += terrain.getNodeDiameter();
+			break;
+		}
+		
+		/*VECTOR*/double collisionNormalX = a.getCentreX() - wallX;
+		/*VECTOR*/double collisionNormalY = a.getCentreY() - wallY;
+		
+		if(Values.DEBUG) {
+			gc.strokeLine(a.getCentreX(), a.getCentreY(), wallX, wallY);
+
+		}
+
+		double length = Math.sqrt(collisionNormalX * collisionNormalX + collisionNormalY * collisionNormalY);
+		/*VECTOR*/collisionNormalX = collisionNormalX / length;
+		/*VECTOR*/collisionNormalY = collisionNormalY / length;
+		
+		double velAlongNormal = (rvx * collisionNormalX + rvy * collisionNormalY);
+		
+		//Only do collision resolution of the objects are moving towards each other
+		if(velAlongNormal < 0) {
+			return;
+		}
+		
+		//Coffeficent of how bouncy it is
+		//0 is Perfectly inelastic, 1 is perfectly elastic
+		//i.e. 0 is pushing, 1 is bouncing off
+		double e = 1;
+		
+		double j = -(1 + e) * velAlongNormal;
+		j /= 1 / a.mass + 1/10000000;
+		
+		double impulseX = j * collisionNormalX;
+		double impulseY = j * collisionNormalY;
+				
+		a.setVelocityX(a.getVelocityX() - (1 / a.getMass() * impulseX));
+		a.setVelocityY(a.getVelocityY() - (1 / a.getMass() * impulseY));	
 	}
 	
-	private void handleMoveableWall(Obstacle o, Wall w) {
-		o.setVelocity(0);
-	}
-	
-	
+	/**
+	 * 
+	 * @param a First Obstacle
+	 * @param b Second Obstacle
+	 * 
+	 * Uses impulse based system. Impulse is based on the parameter e which is a constant that can be defined. It defines the bounciness.
+	 * The size of the collision is also correlated with the mass.
+	 */
 	private void handleObstacleObstacle(Obstacle a, Obstacle b) {
 		
 		double rvx = b.getVelocityX() - a.getVelocityX();
@@ -104,6 +156,14 @@ public class Physics {
 		
 		double velAlongNormal = (rvx * collisionNormalX + rvy * collisionNormalY);
 		
+		//Only do collision resolution of the objects are moving towards each other
+		if(velAlongNormal < 0) {
+			return;
+		}
+		
+		//Coffeficent of how bouncy it is
+		//0 is Perfectly inelastic, 1 is perfectly elastic
+		//i.e. 0 is pushing, 1 is bouncing off
 		double e = 1;
 		
 		double j = -(1 + e) * velAlongNormal;
@@ -111,16 +171,17 @@ public class Physics {
 		
 		double impulseX = j * collisionNormalX;
 		double impulseY = j * collisionNormalY;
-		
-		
+						
 		a.setVelocityX(a.getVelocityX() - (1 / a.getMass() * impulseX));
 		a.setVelocityY(a.getVelocityY() - (1 / a.getMass() * impulseY));
-		
-		
+				
 		b.setVelocityX(b.getVelocityX() + (1 / b.getMass() * impulseX));
-		b.setVelocityY(b.getVelocityY() + (1 / b.getMass() * impulseY));
-		
-		
+		b.setVelocityY(b.getVelocityY() + (1 / b.getMass() * impulseY));	
 	}
 	
+	private void friction() {
+
+	}
+	
+
 }

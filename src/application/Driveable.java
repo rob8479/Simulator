@@ -24,12 +24,10 @@ public class Driveable extends Obstacle {
 	 * Note: Only movable objects can be given velocity, so velocity is controlled within that class and not here.
 	 */
 	public void update(double elapsedTime) {
-		velocityX = (Math.cos(Math.toRadians(angle - 90)) * velocity) * elapsedTime;
-		velocityY = (Math.sin(Math.toRadians(angle - 90)) * velocity) * elapsedTime;
-		this.previousPositionX = positionX;
-		this.previousPositionY = positionY;
-		positionX += velocityX;	
-		positionY += velocityY;
+		velocityX = (Math.cos(Math.toRadians(angle - 90)) * velocity);
+		velocityY = (Math.sin(Math.toRadians(angle - 90)) * velocity);
+		positionX += velocityX  * elapsedTime;	
+		positionY += velocityY  * elapsedTime;
 		/**
 		 * Because the top left corner is 0,0 - as apposed to the convential bottom left, the whole thing needs shifting by -90 degrees
 		 */
@@ -57,8 +55,13 @@ public class Driveable extends Obstacle {
     	sonar.setPositionY(sonarPosY);
     	sonar.setOrientation(angle);
     	//Scan the sonar
-    	return sonar.scan(false,this);
+    	return sonar.scan(this);
     	
+    }
+    
+    
+    public void drive(double newVelocity) {
+    	this.velocity = newVelocity * 100;
     }
     
     

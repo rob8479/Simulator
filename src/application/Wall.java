@@ -11,7 +11,7 @@ public class Wall {
 	private double positionY;
 	private double width;
 	private double height;
-	private double mass;
+	private String position;
 	
 	/**
 	 * 
@@ -19,14 +19,15 @@ public class Wall {
 	 * @param positionY - ToprightPosition
 	 * @param width - width of the wall 
 	 * @param height - height of the wall
+	 * @param position - Position of the wall relative to the obstacle
 	 */
-	public Wall(double positionX, double positionY, double width, double height) {
+	public Wall(double positionX, double positionY, double width, double height, String position) {
 		// TODO Auto-generated constructor stub
 		this.positionX = positionX;
 		this.positionY = positionY;
 		this.width = width;
 		this.height = height;
-		this.mass = 1000000000; //Set it so big that it basically doesn't move
+		this.position = position;
 	}
 	
 	/**
@@ -82,20 +83,25 @@ public class Wall {
 		return hitBox;
 	}
 	
+
 	/**
 	 * 
-	 * @return The mass of the wall
+	 * @return Centre X position of the wall
 	 */
-	public double getMass() {
-		return this.mass;
-	}
-	
 	public double getXPosition() {
 		return this.positionX + width/2;
 	}
 	
+	/**
+	 * 
+	 * @return Centre Y position of the wall
+	 */
 	public double getYPosition() {
 		return this.positionY + height/2;
 	}
 	
+	
+	public String getPosition() {
+		return this.position;
+	}
 }

@@ -117,7 +117,7 @@ public class Terrain {
 	 * @param y - Y Coordinate
 	 * @return Returns the node for which that Coordinate is inside
 	 */
-	public Node nodeFromCoordinate(float x, float y) {
+	public Node nodeFromCoordinate(double x, double y) {
 		x = x / this.nodeDiameter;
 		y = y / this.nodeDiameter;
 		
@@ -125,6 +125,14 @@ public class Terrain {
 		int tempy = (int)y;
 		
 		return this.terrain[tempx][tempy];
+	}
+	
+	public double getCentreOfNode(double x) {
+		x = x / this.nodeDiameter;
+		
+		int tempx = (int)x;
+		return (tempx * this.nodeDiameter) + this.nodeDiameter/2;
+		
 	}
 	
 	
@@ -147,10 +155,13 @@ public class Terrain {
 			Node temp = this.terrain[tempx][tempy - 1];
 			//If the difference between the north node and the current node is greater than 1, then it's a wall
 			if(Math.abs(temp.getTerrainheight() - selectedNode.getTerrainheight()) > 1) {
-				Wall newWall = new Wall(tempx * this.nodeDiameter, (tempy * this.nodeDiameter), this.nodeDiameter, 3);
+				Wall newWall = new Wall(tempx * this.nodeDiameter, (tempy * this.nodeDiameter), this.nodeDiameter, 3,"North");
 				tempWalls.add(newWall);
 				//Draw Hitbox
-				gc.fillRect(tempx * this.nodeDiameter, (tempy * this.nodeDiameter) , this.nodeDiameter, 3);
+				if(Values.DEBUG) {
+					gc.fillRect(tempx * this.nodeDiameter, (tempy * this.nodeDiameter) , this.nodeDiameter, 3);
+
+				}
 			}
 		}
 		//Check South
@@ -158,10 +169,12 @@ public class Terrain {
 			Node temp = this.terrain[tempx][tempy + 1];
 			//If the difference between the south node and the current node is greater than 1, then it's a wall
 			if(Math.abs(temp.getTerrainheight() - selectedNode.getTerrainheight()) > 1) {
-				Wall newWall = new Wall((tempx * this.nodeDiameter), (tempy * this.nodeDiameter) + this.nodeDiameter, this.nodeDiameter, 3);
+				Wall newWall = new Wall((tempx * this.nodeDiameter), (tempy * this.nodeDiameter) + this.nodeDiameter, this.nodeDiameter, 3,"South");
 				tempWalls.add(newWall);
 				//Draw Hitbox
-				gc.fillRect((tempx * this.nodeDiameter), (tempy * this.nodeDiameter) + this.nodeDiameter, this.nodeDiameter, 3);
+				if(Values.DEBUG) {
+					gc.fillRect((tempx * this.nodeDiameter), (tempy * this.nodeDiameter) + this.nodeDiameter, this.nodeDiameter, 3);
+				}
 			}
 		}
 		
@@ -170,10 +183,12 @@ public class Terrain {
 			Node temp = this.terrain[tempx - 1][tempy];
 			//If the difference between the west node and the current node is greater than 1, then it's a wall
 			if(Math.abs(temp.getTerrainheight() - selectedNode.getTerrainheight()) > 1) {
-				Wall newWall = new Wall((tempx * this.nodeDiameter), (tempy * this.nodeDiameter), 3, this.nodeDiameter);
+				Wall newWall = new Wall((tempx * this.nodeDiameter), (tempy * this.nodeDiameter), 3, this.nodeDiameter,"West");
 				tempWalls.add(newWall);
 				//Draw Hitbox
-				gc.fillRect((tempx * this.nodeDiameter), (tempy * this.nodeDiameter), 3, this.nodeDiameter);
+				if(Values.DEBUG) {
+					gc.fillRect((tempx * this.nodeDiameter), (tempy * this.nodeDiameter), 3, this.nodeDiameter);
+				}
 			}
 		}
 		
@@ -182,10 +197,12 @@ public class Terrain {
 			Node temp = this.terrain[tempx + 1][tempy];
 			//If the difference between the west node and the current node is greater than 1, then it's a wall
 			if(Math.abs(temp.getTerrainheight() - selectedNode.getTerrainheight()) > 1) {
-				Wall newWall = new Wall((tempx * this.nodeDiameter) + this.nodeDiameter, (tempy * this.nodeDiameter), 3, this.nodeDiameter);
+				Wall newWall = new Wall((tempx * this.nodeDiameter) + this.nodeDiameter, (tempy * this.nodeDiameter), 3, this.nodeDiameter,"East");
 				tempWalls.add(newWall);
 				//Draw Hitbox
-				gc.fillRect((tempx * this.nodeDiameter) + this.nodeDiameter, (tempy * this.nodeDiameter), 3, this.nodeDiameter);
+				if(Values.DEBUG) {
+					gc.fillRect((tempx * this.nodeDiameter) + this.nodeDiameter, (tempy * this.nodeDiameter), 3, this.nodeDiameter);
+				}
 			}
 		}
 		return tempWalls;

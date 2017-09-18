@@ -37,8 +37,6 @@ public class Control implements Initializable{
     
     private Driveable robot;
     private Physics physics;
-    private Ball ball;
-    private Ball ball2;
     
     private Boolean isRunning;
     
@@ -127,7 +125,7 @@ public class Control implements Initializable{
 				}
 			}
 		 */
-		
+				
 		zoomedMap.setOnMouseClicked(new EventHandler<MouseEvent>() {
 	        @Override
 	        public void handle(MouseEvent me) {
@@ -155,19 +153,12 @@ public class Control implements Initializable{
 		robot = new Driveable(Robot, 600, 400, 0,testSonar,100);
 		obstacles.add(robot);
 		
-		
-		Moveable newObstacle = new Moveable(Box, 500, 10, 0,10);
-		obstacles.add(newObstacle);
-		
-		Moveable newObstacle2 = new Moveable(Box, 10, 10, 0,10);
-		obstacles.add(newObstacle2);
+		Moveable test = new Moveable(Box, 100, 300, 0, 100);
+		obstacles.add(test);
 		
 		
-		newObstacle.setVelocityX(-1);
-		newObstacle.setVelocityY(0);
-		
-		newObstacle2.setVelocityX(1);
-		newObstacle2.setVelocityY(0);
+		Moveable test2 = new Moveable(Box, 500, 300, 0, 100);
+		obstacles.add(test2);
 		
 		DecimalFormat df = new DecimalFormat("#.##");
 		
@@ -205,7 +196,7 @@ public class Control implements Initializable{
 					
 					//Main Loop
 					drawTerrain(); //Draw the Terrain
-					physics.checkCollisions(); //Check the collisions
+					physics.propogatePhysics();
 					updatePositions(elapsedTime);
 					drawObstacles(); 	//Then Draw the position of all obstacles
 				}else {
@@ -290,7 +281,7 @@ public class Control implements Initializable{
 		if(this.isRunning) {
 			//Forward
 			if(e.getCode().toString().equals("W")) {
-				robot.setVelocity(+ 1);
+				robot.drive(+ 1);
 			}
 			
 			//Left
@@ -300,7 +291,7 @@ public class Control implements Initializable{
 			
 			//Backwards
 			if(e.getCode().toString().equals("S")) {
-				robot.setVelocity(- 1);
+				robot.drive(- 1);
 			}
 			
 			//Right
@@ -308,16 +299,6 @@ public class Control implements Initializable{
 				robot.setRotation(robot.getRotation() + 3);
 			}
 			
-			
-			//Test
-			if(e.getCode().toString().equals("P")) {
-				ball.setVelocityX(1);
-			}
-			
-			//Test
-			if(e.getCode().toString().equals("O")) {
-				ball2.setVelocityX(-1);
-			}
 		}
 	}
 	
@@ -355,7 +336,7 @@ public class Control implements Initializable{
 		//Reset Everything
 		obstacles = new ArrayList<Obstacle>();
 		Sonar testSonar = new Sonar(this, 400, 400, 0, 200, 180, 180, 100, 90);
-		robot = new Driveable(Robot, 400, 400, 0, testSonar,0);
+		robot = new Driveable(Robot, 400, 400, 0, testSonar,100);
 		obstacles.add(robot);
 		terrain.generateRandomTerrain();
 		this.drawTerrain();
@@ -410,7 +391,7 @@ public class Control implements Initializable{
 				//Delete the Obstacle at the given position
 				this.deleteObstacle(mouseX, mouseY);
 				return;
-			case "Moveable Obstacle":
+			case "MoveAble Obstacle":
 				this.addObstacle(mouseX, mouseY, true);
 				return;
 			case "Fixed Obstacle":
@@ -459,10 +440,10 @@ public class Control implements Initializable{
 	 */
 	public void addObstacle(double x, double y, boolean moveable) {
 		if(moveable) {
-			Moveable newObstacle = new Moveable(Box, x - Box.getWidth()/2, y - Box.getHeight()/2, 0,0);
+			Moveable newObstacle = new Moveable(Box, x - Box.getWidth()/2, y - Box.getHeight()/2, 0,100);
 			obstacles.add(newObstacle);
 		} else {
-			Obstacle newObstacle = new Obstacle(Box, x - Box.getWidth()/2, y - Box.getHeight()/2, 0,0);
+			Obstacle newObstacle = new Obstacle(Box, x - Box.getWidth()/2, y - Box.getHeight()/2, 0,100);
 			obstacles.add(newObstacle);
 		}
 		
