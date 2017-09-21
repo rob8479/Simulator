@@ -9,12 +9,14 @@ import javafx.scene.image.Image;
 public class Driveable extends Obstacle {
 
 	private Sonar sonar;
+	private boolean drive;
 	
 	
 	public Driveable(Image image, double positionX, double positionY, double angle, Sonar sonar,double mass) {
 		super(image, positionX, positionY, angle,mass);
 		// TODO Auto-generated constructor stub
 		this.sonar = sonar;
+		drive = false;
 	}
 	
 	/**
@@ -24,8 +26,13 @@ public class Driveable extends Obstacle {
 	 * Note: Only movable objects can be given velocity, so velocity is controlled within that class and not here.
 	 */
 	public void update(double elapsedTime) {
-		velocityX = (Math.cos(Math.toRadians(angle - 90)) * velocity);
-		velocityY = (Math.sin(Math.toRadians(angle - 90)) * velocity);
+		
+		if(drive) {
+			velocityX = (Math.cos(Math.toRadians(angle - 90)) * velocity);
+			velocityY = (Math.sin(Math.toRadians(angle - 90)) * velocity);
+		}
+		
+		
 		positionX += velocityX  * elapsedTime;	
 		positionY += velocityY  * elapsedTime;
 		/**
@@ -62,7 +69,13 @@ public class Driveable extends Obstacle {
     
     public void drive(double newVelocity) {
     	this.velocity = newVelocity * 100;
+    	drive = true;
     }
+    
+    public void disableDrive() {
+    	this.drive = false;
+    }
+    
     
     
 }

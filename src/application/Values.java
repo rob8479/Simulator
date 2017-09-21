@@ -11,14 +11,13 @@ public final class Values {
 	
 	/*DEBUGGING*/
 	public static final boolean DEBUG = false;
-	public static final boolean DRAWSONAR = false;
+	public static final boolean DRAWSONAR = true;
 	public static final boolean DRAWHITBOX = false;
 	public static final boolean DRAWOBSTACLES = true;
 	
 	
 	/* PHYSICS */
 	//Friction
-	public static final double GRAVITATIONALACCELERATION = 9.80665; //m/s/s
 	
 	
 

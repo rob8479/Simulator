@@ -1,5 +1,7 @@
 package application;
 
+import java.awt.geom.Area;
+import java.awt.geom.Path2D;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -34,7 +36,7 @@ public class Control implements Initializable{
     
     private Terrain terrain; //The Map Terrain
     private ArrayList<Obstacle> obstacles; //All obstacles , moveable and nonemoveable
-    
+
     private Driveable robot;
     private Physics physics;
     
@@ -150,7 +152,7 @@ public class Control implements Initializable{
 		//Note to self, Don't use "this." as this is not the class is anymore, but the seperate thread
 		//i.e. You can do drawTerrain(); but not this.drawTerrain();
 		Sonar testSonar = new Sonar(this, 600, 400, 0, 200, 180, 180, 100, 90);
-		robot = new Driveable(Robot, 600, 400, 0,testSonar,100);
+		robot = new Driveable(Robot, 600, 400, 0,testSonar,1000);
 		obstacles.add(robot);
 		
 		Moveable test = new Moveable(Box, 100, 300, 0, 100);
@@ -159,6 +161,9 @@ public class Control implements Initializable{
 		
 		Moveable test2 = new Moveable(Box, 500, 300, 0, 100);
 		obstacles.add(test2);
+		
+		Ball ball = new Ball(300, 300, 0, 100, 50, Box, Color.RED);
+		obstacles.add(ball);
 		
 		DecimalFormat df = new DecimalFormat("#.##");
 		
@@ -486,5 +491,6 @@ public class Control implements Initializable{
 	public GraphicsContext getGraphicsContext() {
 		return this.gc;
 	}
+	
 	
 }

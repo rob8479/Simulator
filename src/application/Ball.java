@@ -59,6 +59,7 @@ public class Ball extends Obstacle {
 		Area area = new Area(hitBox);
 		area.intersect(new Area (o.getHitBox()));
 		return !area.isEmpty();
+		
 	}
 	
 	/**
@@ -82,12 +83,18 @@ public class Ball extends Obstacle {
 	 *  Returns true if the selected point is within the bounds of the shape.
 	 *  
 	 *  Different to the normal selectedEntity method of the super Obstacle, as the shape is not square.
-	 *  Important for the sonar - so the sonar stops when it hits the object instead of the square hitbox. For improved accuracy 
+	 *  Instead uses equation of a circle as it is faster than using the Ellipse Method
 	 */
 	public boolean selectedEntity(double x, double y) {
-		Ellipse2D.Double hitBox = new Ellipse2D.Double(this.positionX, this.positionY, this.diameter, this.diameter);
-		Area area = new Area(hitBox);
-		return area.contains(x, y);		
+		//Ellipse2D.Double hitBox = new Ellipse2D.Double(this.positionX, this.positionY, this.diameter, this.diameter);
+		//Area area = new Area(hitBox);
+		//return area.contains(x, y);
+		
+		//Optimisation - Use an equal of a circle to see if the point is in it
+		
+		double centreX = this.positionX + (this.diameter / 2);
+		double centreY = this.positionY + (this.diameter / 2);
+		return ((x - centreX) * (x - centreX) + (y - centreY) * (y - centreY)) < ((this.diameter/2) * (this.diameter/2));
 	}
 	
 	

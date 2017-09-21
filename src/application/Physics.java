@@ -55,13 +55,15 @@ public class Physics {
 		for(Obstacle o: obstacles) {
 			for(Obstacle l: obstacles) {
 				//Only check objects within a 100cm radius of each other
-				//TODO Update so it works based off the centres of obstacles
-				if(!o.equals(l) && (o.getDistance(o.getXPosition(), o.getYPosition(), l.getXPosition(), l.getYPosition()) < 100)) {
-					if(o.intersects(l)) {
-						//Collision Handle 
-						//Need a check to make sure we don't have this transative relation
-						//I.e. A Collides B , Does not then check B Collides A
-						this.handleObstacleObstacle(o, l);
+				//TODO Update so it works based off the centres of obstacles - And based on the size of objects (Circle to circle detection)
+				if(Math.abs(o.getVelocityX()) > 0.2 || Math.abs(o.getVelocityY()) > 0.2) {
+					if(!o.equals(l) && (o.getDistance(o.getXPosition(), o.getYPosition(), l.getXPosition(), l.getYPosition()) < 100)) {
+						if(o.intersects(l)) {
+							//Collision Handle 
+							//Need a check to make sure we don't have this transative relation
+							//I.e. A Collides B , Does not then check B Collides A
+							this.handleObstacleObstacle(o, l);
+						}
 					}
 				}
 			}
@@ -130,8 +132,18 @@ public class Physics {
 		double impulseX = j * collisionNormalX;
 		double impulseY = j * collisionNormalY;
 				
+		double x = a.getVelocityX() - (1 / a.getMass() * impulseX);
+		double y = a.getVelocityY() - (1 / a.getMass() * impulseY);
+		
 		a.setVelocityX(a.getVelocityX() - (1 / a.getMass() * impulseX));
 		a.setVelocityY(a.getVelocityY() - (1 / a.getMass() * impulseY));	
+		
+		//Change Robot (Different to just setting VelX and VelY);
+		if(a.toString().contains("Driveable")) {
+			Driveable temp = (Driveable)a;
+			temp.disableDrive();
+		}
+		
 	}
 	
 	/**
@@ -177,10 +189,20 @@ public class Physics {
 				
 		b.setVelocityX(b.getVelocityX() + (1 / b.getMass() * impulseX));
 		b.setVelocityY(b.getVelocityY() + (1 / b.getMass() * impulseY));	
+		
+		//Change Robot (Different to just setting VelX and VelY);
+		if(a.toString().contains("Driveable")) {
+			Driveable temp = (Driveable)a;
+			temp.disableDrive();
+		}
 	}
 	
 	private void friction() {
-
+		
+		for(Obstacle o : obstacles) {
+			o.setVelocityX(o.getVelocityX() * 0.99);
+			o.setVelocityY(o.getVelocityY() * 0.99);
+		}
 	}
 	
 
