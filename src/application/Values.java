@@ -15,7 +15,6 @@ public final class Values {
 	public static final boolean DRAWHITBOX = false;
 	public static final boolean DRAWOBSTACLES = true;
 	
-	
 	/* PHYSICS */
 	//Friction
 	

@@ -34,15 +34,17 @@ public class Ball extends Obstacle {
 	 * in the direction it is facing to show direction of travel.
 	 */
 	public void render(GraphicsContext gc) {
-		gc.setFill(colour);
-		gc.fillOval(positionX, positionY,this.diameter,this.diameter);
-				
-		//DEBUGGING
-		double centreX = this.positionX + this.diameter/2;
-		double centreY = this.positionY + this.diameter/2;
-		double directionPointx = this.positionX + (this.diameter/2) * Math.cos(Math.toRadians(this.angle));
-		double directionPointy = this.positionY + (this.diameter/2) * Math.sin(Math.toRadians(this.angle));
-		gc.strokeLine(centreX, centreY, directionPointx, directionPointy);
+		if(Values.DRAWOBSTACLES) {
+			gc.setFill(colour);
+			gc.fillOval(positionX, positionY,this.diameter,this.diameter);
+					
+			//DEBUGGING
+			//double centreX = this.positionX + this.diameter/2;
+			//double centreY = this.positionY + this.diameter/2;
+			//double directionPointx = this.positionX + (this.diameter/2) * Math.cos(Math.toRadians(this.angle));
+			//double directionPointy = this.positionY + (this.diameter/2) * Math.sin(Math.toRadians(this.angle));
+			//gc.strokeLine(centreX, centreY, directionPointx, directionPointy);
+		}
 		
 	}
 	

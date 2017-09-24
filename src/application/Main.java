@@ -16,7 +16,7 @@ public class  Main extends Application {
 	public void start(Stage primaryStage) {
 		try {
 			Parent root = FXMLLoader.load(getClass().getResource("GUI.fxml"));	
-			primaryStage.setTitle("Simulator v1.0");
+			primaryStage.setTitle("Simulator Version 0.2");
 			primaryStage.setScene(new Scene(root,1280,720));
 			primaryStage.show();
 		} catch(Exception e) {
